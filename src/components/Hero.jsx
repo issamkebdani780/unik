@@ -1,5 +1,3 @@
-import { CheckCircle2, Droplets, Leaf, ShieldCheck } from 'lucide-react';
-
 const Hero = () => {
   return (
     <section className="w-full bg-gray-50/50 py-12 lg:py-20">
@@ -33,25 +31,25 @@ const Hero = () => {
             <div className="grid grid-cols-4 gap-4 sm:gap-8 pt-10 w-full max-w-lg">
               <div className="flex flex-col items-center text-center space-y-2">
                 <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center bg-white">
-                  <ShieldCheck className="w-5 h-5 text-gray-700 stroke-[1.5]" />
+                  <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
                 </div>
                 <span className="text-[10px] sm:text-xs text-gray-600 font-medium leading-tight">Formules testées<br/>dermatologiquement</span>
               </div>
               <div className="flex flex-col items-center text-center space-y-2">
                 <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center bg-white">
-                  <Leaf className="w-5 h-5 text-gray-700 stroke-[1.5]" />
+                  <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 12 12"/></svg>
                 </div>
                 <span className="text-[10px] sm:text-xs text-gray-600 font-medium leading-tight">Ingrédients<br/>rigoureusement<br/>sélectionnés</span>
               </div>
               <div className="flex flex-col items-center text-center space-y-2">
                 <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center bg-white">
-                  <CheckCircle2 className="w-5 h-5 text-gray-700 stroke-[1.5]" />
+                  <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                 </div>
                 <span className="text-[10px] sm:text-xs text-gray-600 font-medium leading-tight">Efficacité<br/>prouvée</span>
               </div>
               <div className="flex flex-col items-center text-center space-y-2">
                 <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center bg-white">
-                  <Droplets className="w-5 h-5 text-gray-700 stroke-[1.5]" />
+                  <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 2.9 7 2.9s-2.29 6.16-2.29 6.16C3.57 10 3 11.09 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 1 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg>
                 </div>
                 <span className="text-[10px] sm:text-xs text-gray-600 font-medium leading-tight">Convient à<br/>tous types de peau<br/>et de cheveux</span>
               </div>

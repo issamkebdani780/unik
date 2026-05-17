@@ -1,5 +1,3 @@
-import { ArrowRight } from 'lucide-react';
-
 const Categories = () => {
   return (
     <section className="w-full">
@@ -16,7 +14,7 @@ const Categories = () => {
               Des soins ciblés pour stimuler la pousse, fortifier et sublimer vos cheveux jour après jour.
             </p>
             <a href="#" className="inline-flex items-center text-sm font-bold tracking-widest border-b-2 border-black pb-1 hover:text-green-700 hover:border-green-700 transition-colors">
-              DÉCOUVRIR <ArrowRight className="ml-2 w-4 h-4" />
+              DÉCOUVRIR <svg className="ml-2 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
           </div>
           
@@ -41,7 +39,7 @@ const Categories = () => {
               Des soins dermatologiques haute efficacité pour purifier, hydrater et protéger toutes les peaux.
             </p>
             <a href="#" className="inline-flex items-center text-sm font-bold tracking-widest border-b-2 border-black pb-1 hover:text-blue-600 hover:border-blue-600 transition-colors">
-              DÉCOUVRIR <ArrowRight className="ml-2 w-4 h-4" />
+              DÉCOUVRIR <svg className="ml-2 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
           </div>
           
