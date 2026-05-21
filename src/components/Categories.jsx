@@ -1,58 +1,147 @@
+import React from 'react';
+
+const CategoryCard = ({
+  bgColor,
+  titleColor,
+  linkHoverColor,
+  title,
+  description,
+  imageSrc,
+  imageAlt,
+  borderRight = false,
+}) => (
+  <div
+    className={`relative flex flex-row overflow-hidden ${bgColor}${borderRight ? ' border-r border-gray-200' : ''}`}
+    style={{ height: '300px' }}
+  >
+    {/* Left: Text */}
+    <div
+      className="flex flex-col justify-center pl-10 pr-4 py-10 z-10 shrink-0"
+      style={{ width: '42%' }}
+    >
+      <span
+        style={{
+          fontSize: '10px',
+          fontWeight: 700,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: '#777',
+          marginBottom: '4px',
+          fontFamily: 'Outfit, sans-serif',
+        }}
+      >
+        GAMME
+      </span>
+      <h2
+        style={{
+          fontFamily: 'Outfit, sans-serif',
+          fontWeight: 900,
+          textTransform: 'uppercase',
+          letterSpacing: '-0.01em',
+          fontSize: 'clamp(1.5rem, 2.5vw, 2.1rem)',
+          color: titleColor,
+          lineHeight: 1.05,
+          marginBottom: '14px',
+        }}
+      >
+        {title}
+      </h2>
+      <p
+        style={{
+          fontFamily: 'Outfit, sans-serif',
+          fontSize: '12.5px',
+          color: '#666',
+          lineHeight: 1.65,
+          marginBottom: '24px',
+          maxWidth: '200px',
+          fontWeight: 400,
+        }}
+      >
+        {description}
+      </p>
+      <a
+        href="#"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '11px',
+          fontWeight: 700,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: '#111',
+          borderBottom: '1.5px solid #111',
+          paddingBottom: '2px',
+          width: 'fit-content',
+          textDecoration: 'none',
+          transition: 'color 0.25s, border-color 0.25s',
+          fontFamily: 'Outfit, sans-serif',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.color = linkHoverColor;
+          e.currentTarget.style.borderColor = linkHoverColor;
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.color = '#111';
+          e.currentTarget.style.borderColor = '#111';
+        }}
+      >
+        DÉCOUVRIR <span style={{ fontSize: '14px', fontWeight: 300 }}>→</span>
+      </a>
+    </div>
+
+    {/* Right: Products image — centered, standing from bottom */}
+    <div
+      className="flex-1 flex items-end justify-center overflow-hidden"
+      style={{ paddingBottom: '0px' }}
+    >
+      <img
+        src={imageSrc}
+        alt={imageAlt}
+        style={{
+          height: '88%',
+          width: 'auto',
+          objectFit: 'contain',
+          objectPosition: 'bottom center',
+          display: 'block',
+          transition: 'transform 0.6s ease',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.04)')}
+        onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+      />
+    </div>
+  </div>
+);
+
 const Categories = () => {
   return (
-    <section className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2">
-        
-        {/* Capillaire Section */}
-        <div className="bg-[#f2f6eb]/60 py-16 px-8 sm:px-16 lg:px-24 flex flex-col justify-center items-start min-h-[500px] relative group overflow-hidden">
-          <div className="z-10 w-full max-w-md">
-            <h4 className="text-sm font-bold tracking-widest text-gray-800 mb-1">GAMME</h4>
-            <h2 className="text-3xl sm:text-4xl font-bold text-green-700 tracking-tight mb-6">
-              CAPILLAIRE
-            </h2>
-            <p className="text-gray-700 font-medium mb-10 max-w-sm">
-              Des soins ciblés pour stimuler la pousse, fortifier et sublimer vos cheveux jour après jour.
-            </p>
-            <a href="#" className="inline-flex items-center text-sm font-bold tracking-widest border-b-2 border-black pb-1 hover:text-green-700 hover:border-green-700 transition-colors">
-              DÉCOUVRIR <svg className="ml-2 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-          </div>
-          
-          {/* Products Placeholder Vide */}
-          <div className="absolute right-0 bottom-0 w-1/2 h-full flex items-end justify-center pb-12 pr-8 pointer-events-none">
-            <div className="relative w-full h-2/3 flex items-end justify-end space-x-2">
-              <div className="w-16 h-48 bg-white shadow-lg rounded-md border border-gray-100 flex items-center justify-center translate-y-4 group-hover:-translate-y-2 transition-transform duration-500 delay-75"></div>
-              <div className="w-20 h-64 bg-white shadow-lg rounded-md border border-gray-100 flex items-center justify-center group-hover:-translate-y-4 transition-transform duration-500"></div>
-              <div className="w-12 h-32 bg-white shadow-lg rounded-md border border-gray-100 flex items-center justify-center translate-y-8 group-hover:translate-y-2 transition-transform duration-500 delay-150"></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Dermatologique Section */}
-        <div className="bg-[#f0f4fa]/70 py-16 px-8 sm:px-16 lg:px-24 flex flex-col justify-center items-start min-h-[500px] relative group overflow-hidden">
-          <div className="z-10 w-full max-w-md">
-            <h4 className="text-sm font-bold tracking-widest text-gray-800 mb-1">GAMME</h4>
-            <h2 className="text-3xl sm:text-4xl font-bold text-blue-600 tracking-tight mb-6">
-              DERMATOLOGIQUE
-            </h2>
-            <p className="text-gray-700 font-medium mb-10 max-w-sm">
-              Des soins dermatologiques haute efficacité pour purifier, hydrater et protéger toutes les peaux.
-            </p>
-            <a href="#" className="inline-flex items-center text-sm font-bold tracking-widest border-b-2 border-black pb-1 hover:text-blue-600 hover:border-blue-600 transition-colors">
-              DÉCOUVRIR <svg className="ml-2 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-          </div>
-          
-          {/* Products Placeholder Vide */}
-          <div className="absolute right-0 bottom-0 w-1/2 h-full flex items-end justify-center pb-12 pr-8 pointer-events-none">
-            <div className="relative w-full h-2/3 flex items-end justify-end space-x-2">
-              <div className="w-14 h-40 bg-white shadow-lg rounded-md border border-gray-100 flex items-center justify-center translate-y-8 group-hover:-translate-y-1 transition-transform duration-500 delay-75"></div>
-              <div className="w-16 h-32 bg-white shadow-lg rounded-md border border-gray-100 flex items-center justify-center translate-y-12 group-hover:translate-y-4 transition-transform duration-500 delay-150"></div>
-              <div className="w-20 h-56 bg-white shadow-lg rounded-md border border-gray-100 flex items-center justify-center group-hover:-translate-y-3 transition-transform duration-500"></div>
-            </div>
-          </div>
-        </div>
-
+    <section style={{ width: '100%', background: '#fff' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+        }}
+      >
+        <CategoryCard
+          bgColor="bg-[#f0f4ea]"
+          titleColor="#3a7547"
+          linkHoverColor="#3a7547"
+          title="CAPILLAIRE"
+          description="Des soins ciblés pour stimuler la pousse, fortifier et sublimer vos cheveux jour après jour."
+          imageSrc="/gamme-capillaire.png"
+          imageAlt="Gamme Capillaire Products"
+          borderRight={true}
+        />
+        <CategoryCard
+          bgColor="bg-[#ecf2f8]"
+          titleColor="#296fc2"
+          linkHoverColor="#296fc2"
+          title="DERMATOLOGIQUE"
+          description="Des soins dermatologiques haute efficacité pour purifier, hydrater et protéger toutes les peaux."
+          imageSrc="/gamme-dermatologique.png"
+          imageAlt="Gamme Dermatologique Products"
+          borderRight={false}
+        />
       </div>
     </section>
   );

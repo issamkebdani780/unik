@@ -1,34 +1,44 @@
+import React from 'react';
+
 const Newsletter = () => {
   return (
-    <section className="w-full py-20 relative overflow-hidden bg-gradient-to-r from-[#eef4fc] to-[#f8faff]">
-      {/* Decorative Bubbles (Vide representation) */}
-      <div className="absolute top-10 left-10 w-24 h-24 rounded-full border-4 border-white/60 bg-blue-100/20 backdrop-blur-sm shadow-sm"></div>
-      <div className="absolute bottom-10 left-32 w-16 h-16 rounded-full border-2 border-white/80 bg-white/30 backdrop-blur-sm shadow-sm"></div>
-      <div className="absolute top-32 left-1/4 w-10 h-10 rounded-full border-2 border-white/60 bg-blue-100/30 backdrop-blur-sm shadow-sm"></div>
-      <div className="absolute bottom-20 right-20 w-32 h-32 rounded-full border-4 border-white/50 bg-white/20 backdrop-blur-sm shadow-sm hidden md:block"></div>
+    <section className="w-full py-16 md:py-20 relative overflow-hidden bg-gradient-to-r from-[#eef4fc] to-[#f4f8fe] border-t border-b border-gray-150">
       
+      {/* Overlapping Product on the left */}
+      <div className="absolute bottom-[-30px] left-[-30px] sm:left-[-10px] md:left-6 w-44 sm:w-52 md:w-60 lg:w-64 pointer-events-none z-0 select-none">
+        <img 
+          src="/newsletter-bottle.png" 
+          alt="Unik Anti-Acné Serum" 
+          className="w-full h-auto object-contain drop-shadow-md"
+        />
+      </div>
+
+      {/* Decorative bubble floating (Right) */}
+      <div className="absolute right-[5%] top-[15%] w-16 h-16 rounded-full border border-white/60 bg-white/20 backdrop-blur-sm shadow-sm hidden sm:block pointer-events-none select-none"></div>
+      <div className="absolute right-[15%] bottom-[15%] w-24 h-24 rounded-full border border-white/50 bg-white/10 backdrop-blur-sm shadow-sm hidden md:block pointer-events-none select-none"></div>
+
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col items-center text-center space-y-8">
+        <div className="flex flex-col items-center text-center space-y-6 md:space-y-8 pl-[10%] sm:pl-0">
           
-          <div className="space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-black">
+          <div className="space-y-2">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-black uppercase">
               REJOIGNEZ LA COMMUNAUTÉ UNIK
             </h2>
-            <p className="text-gray-600 font-medium">
+            <p className="text-gray-500 font-semibold text-xs sm:text-sm">
               Conseils beauté, nouveautés et offres exclusives rien que pour vous.
             </p>
           </div>
 
-          <form className="w-full max-w-lg flex flex-col sm:flex-row gap-3">
+          <form className="w-full max-w-md flex flex-col sm:flex-row gap-0 border border-gray-200 shadow-sm bg-white p-1">
             <input 
               type="email" 
               placeholder="Votre e-mail" 
-              className="flex-1 px-6 py-3.5 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all text-sm rounded-none"
+              className="flex-1 px-4 py-3 bg-white focus:outline-none text-xs sm:text-sm text-gray-800"
               required
             />
             <button 
               type="submit" 
-              className="bg-black text-white px-8 py-3.5 text-sm font-bold tracking-wider hover:bg-gray-800 transition-colors whitespace-nowrap rounded-none"
+              className="bg-black text-white px-6 sm:px-8 py-3 text-xs font-bold tracking-widest hover:bg-emerald-950 transition-colors whitespace-nowrap rounded-none uppercase duration-300"
             >
               S'INSCRIRE
             </button>
@@ -36,11 +46,7 @@ const Newsletter = () => {
 
         </div>
       </div>
-      
-      {/* Product Placeholder on the left */}
-      <div className="absolute -bottom-10 -left-10 md:left-10 w-48 h-64 bg-white/80 backdrop-blur-md rounded-xl border border-white shadow-2xl rotate-12 flex items-center justify-center opacity-50 pointer-events-none">
-        <span className="text-gray-300 text-xs font-bold tracking-widest rotate-90">UNIK SERUM</span>
-      </div>
+
     </section>
   );
 };
