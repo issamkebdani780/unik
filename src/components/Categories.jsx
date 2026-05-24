@@ -92,19 +92,20 @@ const CategoryCard = ({
 
     {/* Right: Products image — centered, standing from bottom */}
     <div
-      className="flex-1 flex items-end justify-center overflow-hidden"
+      className="flex-1 flex overflow-hidden"
       style={{ paddingBottom: '0px' }}
     >
       <img
         src={imageSrc}
         alt={imageAlt}
         style={{
-          height: '88%',
-          width: 'auto',
-          objectFit: 'contain',
-          objectPosition: 'bottom center',
+          height: '100%',
+          width: '100%',
+          objectFit: 'cover',
+          objectPosition: 'left center',
           display: 'block',
           transition: 'transform 0.6s ease',
+          margin: '0 5px 0 0'
         }}
         onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.04)')}
         onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
@@ -128,7 +129,7 @@ const Categories = () => {
           linkHoverColor="#3a7547"
           title="CAPILLAIRE"
           description="Des soins ciblés pour stimuler la pousse, fortifier et sublimer vos cheveux jour après jour."
-          imageSrc="/gamme-capillaire.png"
+          imageSrc="/catg2.png"
           imageAlt="Gamme Capillaire Products"
           borderRight={true}
         />
@@ -138,7 +139,7 @@ const Categories = () => {
           linkHoverColor="#296fc2"
           title="DERMATOLOGIQUE"
           description="Des soins dermatologiques haute efficacité pour purifier, hydrater et protéger toutes les peaux."
-          imageSrc="/gamme-dermatologique.png"
+          imageSrc="/catg1.png"
           imageAlt="Gamme Dermatologique Products"
           borderRight={false}
         />

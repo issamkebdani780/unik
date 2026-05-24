@@ -2,12 +2,21 @@ import React from 'react';
 
 const Hero = () => {
   return (
-    <section className="w-full bg-[#fcfcfc] py-12 lg:py-16 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+    <section className="w-full bg-[#fcfcfc] overflow-hidden relative">
+      {/* Right Product Image (Full Bleed on Desktop) */}
+      <div className="hidden lg:block absolute top-0 right-0 w-[100vw] h-full z-0">
+        <img
+          src="/hero.jpg"
+          alt="Gammes Unik Capillaire et Dermatologique"
+          className="w-full h-full object-cover object-left"
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center py-12 lg:py-20 lg:min-h-[650px]">
 
           {/* Left Text Content */}
-          <div className="lg:col-span-6 flex flex-col items-start space-y-6">
+          <div className="lg:col-span-6 flex flex-col items-start space-y-6 pr-0 lg:pr-8">
             <div className="space-y-1">
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-black tracking-tight leading-none uppercase">
                 L'EXPERTISE
@@ -100,18 +109,13 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Right Product Image */}
-          <div className="lg:col-span-6 flex justify-center items-center relative">
-            {/* Soft decorative blur behind products */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-emerald-500/5 blur-[120px] rounded-full"></div>
-
-            <div className="relative w-full max-w-lg lg:max-w-xl xl:max-w-2xl">
-              <img
-                src="/hero-products.png"
-                alt="Gammes Unik Capillaire et Dermatologique"
-                className="w-full h-auto object-cover relative z-10 drop-shadow-sm select-none"
-              />
-            </div>
+          {/* Right Product Image (Mobile only) */}
+          <div className="lg:hidden col-span-1 w-full h-[350px] sm:h-[450px]">
+            <img
+              src="/hero.jpg"
+              alt="Gammes Unik Capillaire et Dermatologique"
+              className="w-full h-full object-cover object-center rounded-2xl shadow-sm"
+            />
           </div>
 
         </div>

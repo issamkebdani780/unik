@@ -4,7 +4,7 @@ const Header = () => {
   return (
     <header className="w-full bg-white border-b border-gray-100">
       {/* Top Banner */}
-      <div className="w-full bg-[#f9f9f9] border-b border-gray-200/60 text-[10px] sm:text-xs py-2.5 px-4 flex justify-between items-center text-gray-500 font-semibold tracking-widest uppercase">
+      <div className="w-full bg-[#f9f9f9] border-b border-gray-200/60 text-[10px] sm:text-xs py-2.5 px-4 flex justify-between items-center text-gray-500 font-semibold tracking-widest uppercase" style={{fontFamily: 'Inter, sans-serif'}}>
         <div className="flex-1 text-left hidden md:block">LIVRAISON OFFERTE DÈS 3000 DINARS</div>
         <div className="flex-1 text-center">EXPERTISE DERMATOLOGIQUE & CAPILLAIRE</div>
         <div className="flex-1 text-right hidden md:block cursor-pointer hover:text-black transition-colors flex items-center justify-end gap-1">
@@ -17,7 +17,7 @@ const Header = () => {
         <div className="grid grid-cols-12 items-center h-24 sm:h-28">
 
           {/* Navigation Links - Left aligned */}
-          <nav className="col-span-5 hidden md:flex items-center space-x-4 lg:space-x-8 text-xs font-bold tracking-widest text-black whitespace-nowrap">
+          <nav className="col-span-5 hidden md:flex items-center space-x-4 lg:space-x-8 text-xs font-semibold tracking-[0.12em] text-black whitespace-nowrap" style={{fontFamily: '"Plus Jakarta Sans", sans-serif'}}>
             <a href="#" className="hover:text-emerald-700 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-emerald-700 after:transition-all">ACCUEIL</a>
             <a href="#" className="hover:text-emerald-700 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-emerald-700 after:transition-all">NOS GAMMES</a>
             <a href="#" className="hover:text-emerald-700 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-emerald-700 after:transition-all">À PROPOS</a>
@@ -36,13 +36,13 @@ const Header = () => {
           {/* Logo - Center aligned */}
           <div className="col-span-2 flex flex-col items-center justify-center">
             <div className="relative">
-              <h1 className="text-4xl sm:text-5xl font-serif text-black leading-none tracking-wide select-none">
-                Unik<span className="text-[10px] align-super font-sans font-light relative top-[-14px] left-[1px]">®</span>
+              <h1 className="text-4xl sm:text-5xl text-black leading-none tracking-wide select-none" style={{fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700}}>
+                Unik<span className="text-[10px] align-super font-light relative top-[-14px] left-[1px]" style={{fontFamily: 'Inter, sans-serif'}}>®</span>
               </h1>
             </div>
             <div className="flex items-center mt-1 w-full justify-center">
               <div className="h-[1px] w-8 sm:w-10 bg-emerald-600/60"></div>
-              <span className="mx-2 font-caveat text-emerald-600 text-lg sm:text-xl font-medium whitespace-nowrap">Comme toi</span>
+              <span className="mx-2 text-emerald-600 text-lg sm:text-xl font-medium whitespace-nowrap" style={{fontFamily: 'Allura, cursive', fontSize: '1.3rem'}}>Comme toi</span>
               <div className="h-[1px] w-8 sm:w-10 bg-emerald-600/60"></div>
             </div>
           </div>
