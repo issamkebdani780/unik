@@ -8,17 +8,10 @@ const CategoryCard = ({
   description,
   imageSrc,
   imageAlt,
-  borderRight = false,
 }) => (
-  <div
-    className={`relative flex flex-row overflow-hidden ${bgColor}${borderRight ? ' border-r border-gray-200' : ''}`}
-    style={{ height: '300px' }}
-  >
-    {/* Left: Text */}
-    <div
-      className="flex flex-col justify-center pl-10 pr-4 py-10 z-10 shrink-0"
-      style={{ width: '42%' }}
-    >
+  <div className={`relative flex flex-col sm:flex-row overflow-hidden ${bgColor} min-h-[260px] sm:h-[300px]`}>
+    {/* Text */}
+    <div className="flex flex-col justify-center px-6 sm:pl-8 lg:pl-10 sm:pr-4 pt-8 pb-6 sm:py-10 z-10 sm:w-[42%] shrink-0">
       <span
         style={{
           fontSize: '10px',
@@ -27,32 +20,32 @@ const CategoryCard = ({
           textTransform: 'uppercase',
           color: '#777',
           marginBottom: '4px',
-          fontFamily: 'Outfit, sans-serif',
+          fontFamily: '"General Sans", sans-serif',
         }}
       >
         GAMME
       </span>
       <h2
         style={{
-          fontFamily: 'Outfit, sans-serif',
-          fontWeight: 900,
+          fontFamily: '"General Sans", sans-serif',
+          fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '-0.01em',
-          fontSize: 'clamp(1.5rem, 2.5vw, 2.1rem)',
+          fontSize: 'clamp(1.3rem, 2.5vw, 2.1rem)',
           color: titleColor,
           lineHeight: 1.05,
-          marginBottom: '14px',
+          marginBottom: '12px',
         }}
       >
         {title}
       </h2>
       <p
         style={{
-          fontFamily: 'Outfit, sans-serif',
+          fontFamily: 'Inter, sans-serif',
           fontSize: '12.5px',
           color: '#666',
           lineHeight: 1.65,
-          marginBottom: '24px',
+          marginBottom: '20px',
           maxWidth: '200px',
           fontWeight: 400,
         }}
@@ -75,7 +68,7 @@ const CategoryCard = ({
           width: 'fit-content',
           textDecoration: 'none',
           transition: 'color 0.25s, border-color 0.25s',
-          fontFamily: 'Outfit, sans-serif',
+          fontFamily: '"General Sans", sans-serif',
         }}
         onMouseEnter={e => {
           e.currentTarget.style.color = linkHoverColor;
@@ -90,11 +83,8 @@ const CategoryCard = ({
       </a>
     </div>
 
-    {/* Right: Products image — centered, standing from bottom */}
-    <div
-      className="flex-1 flex overflow-hidden"
-      style={{ paddingBottom: '0px' }}
-    >
+    {/* Image */}
+    <div className="flex-1 overflow-hidden h-48 sm:h-full">
       <img
         src={imageSrc}
         alt={imageAlt}
@@ -102,10 +92,9 @@ const CategoryCard = ({
           height: '100%',
           width: '100%',
           objectFit: 'cover',
-          objectPosition: 'left center',
+          objectPosition: 'center',
           display: 'block',
           transition: 'transform 0.6s ease',
-          margin: '0 5px 0 0'
         }}
         onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.04)')}
         onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
@@ -116,13 +105,8 @@ const CategoryCard = ({
 
 const Categories = () => {
   return (
-    <section style={{ width: '100%', background: '#fff' }}>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-        }}
-      >
+    <section className="w-full bg-white">
+      <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
         <CategoryCard
           bgColor="bg-[#f0f4ea]"
           titleColor="#3a7547"
@@ -131,7 +115,6 @@ const Categories = () => {
           description="Des soins ciblés pour stimuler la pousse, fortifier et sublimer vos cheveux jour après jour."
           imageSrc="/catg2.png"
           imageAlt="Gamme Capillaire Products"
-          borderRight={true}
         />
         <CategoryCard
           bgColor="bg-[#ecf2f8]"
@@ -141,7 +124,6 @@ const Categories = () => {
           description="Des soins dermatologiques haute efficacité pour purifier, hydrater et protéger toutes les peaux."
           imageSrc="/catg1.png"
           imageAlt="Gamme Dermatologique Products"
-          borderRight={false}
         />
       </div>
     </section>
