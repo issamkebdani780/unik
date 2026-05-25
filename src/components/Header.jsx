@@ -63,7 +63,7 @@ const Header = () => {
               <img
                 src="/RiseGroup-18.png"
                 alt="Unik - Comme toi"
-                className="h-12 sm:h-14 lg:h-16 w-auto object-contain select-none"
+                className="h-20 sm:h-24 lg:h-28 w-auto object-contain select-none"
               />
             </a>
           </div>
