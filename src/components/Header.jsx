@@ -38,7 +38,7 @@ const Header = () => {
           </nav>
 
           {/* Hamburger — mobile */}
-          <div className="col-span-5 md:hidden flex items-center">
+          <div className="col-span-4 md:hidden flex items-center">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="text-black hover:text-gray-600 focus:outline-none p-1"
@@ -58,18 +58,18 @@ const Header = () => {
           </div>
 
           {/* Logo — center */}
-          <div className="col-span-2 flex items-center justify-center">
+          <div className="col-span-4 md:col-span-2 flex items-center justify-center">
             <a href="#" aria-label="Unik - Accueil">
               <img
                 src="/RiseGroup-18.png"
                 alt="Unik - Comme toi"
-                className="h-20 sm:h-24 lg:h-28 w-auto object-contain select-none"
+                className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto object-contain select-none"
               />
             </a>
           </div>
 
           {/* Icons — right */}
-          <div className="col-span-5 flex items-center justify-end space-x-3 sm:space-x-5">
+          <div className="col-span-4 md:col-span-5 flex items-center justify-end space-x-3 sm:space-x-5">
             <button className="text-black hover:text-emerald-700 transition-colors p-1.5" aria-label="Recherche">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8" />
