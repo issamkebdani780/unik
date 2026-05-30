@@ -6,7 +6,7 @@ const Hero = () => {
       {/* Background image — desktop only */}
       <div className="hidden lg:block absolute top-0 right-0 w-[100vw] h-full z-0">
         <img
-          src="/hero.jpg"
+          src="/hero.png"
           alt="Gammes Unik Capillaire et Dermatologique"
           className="w-full h-full object-cover object-left"
         />
@@ -98,7 +98,7 @@ const Hero = () => {
           {/* Hero image — mobile/tablet only */}
           <div className="lg:hidden w-full h-[280px] sm:h-[420px] rounded-2xl overflow-hidden shadow-sm">
             <img
-              src="/hero.jpg"
+              src="/hero.png"
               alt="Gammes Unik Capillaire et Dermatologique"
               className="w-full h-full object-cover object-center"
             />

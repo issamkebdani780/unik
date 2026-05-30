@@ -9,9 +9,9 @@ const CategoryCard = ({
   imageSrc,
   imageAlt,
 }) => (
-  <div className={`relative flex flex-col sm:flex-row overflow-hidden ${bgColor} min-h-[260px] sm:h-[300px]`}>
+  <div className={`relative flex flex-col sm:flex-row overflow-hidden ${bgColor} min-h-[280px] sm:h-[380px]`}>
     {/* Text */}
-    <div className="flex flex-col justify-center px-6 sm:pl-8 lg:pl-10 sm:pr-4 pt-8 pb-6 sm:py-10 z-10 sm:w-[42%] shrink-0">
+    <div className="flex flex-col justify-center px-6 sm:pl-8 lg:pl-10 sm:pr-4 pt-8 pb-6 sm:py-10 z-10 sm:w-[34%] shrink-0">
       <span
         style={{
           fontSize: '10px',

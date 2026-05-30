@@ -5,11 +5,11 @@ const Newsletter = () => {
     <section className="w-full py-14 md:py-20 relative overflow-hidden bg-gradient-to-r from-[#eef4fc] to-[#f4f8fe] border-t border-b border-gray-200/60">
 
       {/* Decorative product image — hidden on small screens to avoid overlap */}
-      <div className="hidden lg:block absolute top-1/2 -translate-y-1/2 left-8 xl:left-16 w-72 xl:w-96 pointer-events-none z-0 select-none">
+      <div className="hidden lg:block absolute top-1/2 -translate-y-1/2 left-8 xl:left-16 w-96 xl:w-[28rem] pointer-events-none z-0 select-none">
         <img
           src="/newsletter.png"
           alt="Unik Sérum"
-          className="w-full h-auto object-contain scale-[1.2]"
+          className="w-full h-auto object-contain scale-[1.5]"
         />
       </div>
 
