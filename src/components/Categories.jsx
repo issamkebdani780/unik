@@ -20,14 +20,12 @@ const CategoryCard = ({
           textTransform: 'uppercase',
           color: '#777',
           marginBottom: '4px',
-          fontFamily: '"General Sans", sans-serif',
         }}
       >
         GAMME
       </span>
       <h2
         style={{
-          fontFamily: '"General Sans", sans-serif',
           fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '-0.01em',
@@ -41,7 +39,6 @@ const CategoryCard = ({
       </h2>
       <p
         style={{
-          fontFamily: 'Inter, sans-serif',
           fontSize: '12.5px',
           color: '#666',
           lineHeight: 1.65,
@@ -68,7 +65,6 @@ const CategoryCard = ({
           width: 'fit-content',
           textDecoration: 'none',
           transition: 'color 0.25s, border-color 0.25s',
-          fontFamily: '"General Sans", sans-serif',
         }}
         onMouseEnter={e => {
           e.currentTarget.style.color = linkHoverColor;

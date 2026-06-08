@@ -8,7 +8,6 @@ const Header = () => {
       {/* Top Banner */}
       <div
         className="w-full bg-[#f9f9f9] border-b border-gray-200/60 text-[10px] sm:text-xs py-2 px-4 flex justify-between items-center text-gray-500 font-semibold tracking-widest uppercase"
-        style={{ fontFamily: 'Inter, sans-serif' }}
       >
         <div className="flex-1 text-left hidden md:block">LIVRAISON OFFERTE DÈS 3000 DINARS</div>
         <div className="flex-1 text-center">EXPERTISE DERMATOLOGIQUE &amp; CAPILLAIRE</div>
@@ -24,7 +23,6 @@ const Header = () => {
           {/* Navigation Links — desktop */}
           <nav
             className="col-span-5 hidden md:flex items-center space-x-4 lg:space-x-8 text-xs font-semibold tracking-[0.12em] text-black whitespace-nowrap"
-            style={{ fontFamily: '"General Sans", sans-serif' }}
           >
             {['ACCUEIL', 'NOS GAMMES', 'À PROPOS', 'NOS ENGAGEMENTS'].map((item) => (
               <a
@@ -99,7 +97,6 @@ const Header = () => {
       {menuOpen && (
         <div
           className="md:hidden bg-white border-t border-gray-100 px-6 py-6 flex flex-col space-y-5 animate-[fadeDown_0.2s_ease]"
-          style={{ fontFamily: '"General Sans", sans-serif' }}
         >
           {['ACCUEIL', 'NOS GAMMES', 'À PROPOS', 'NOS ENGAGEMENTS'].map((item) => (
             <a
