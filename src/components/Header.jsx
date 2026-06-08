@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const pathname = location.pathname;
 
   return (
     <header className="w-full bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -24,15 +27,30 @@ const Header = () => {
           <nav
             className="col-span-5 hidden md:flex items-center space-x-4 lg:space-x-8 text-xs font-semibold tracking-[0.12em] text-black whitespace-nowrap"
           >
-            {['ACCUEIL', 'NOS GAMMES', 'À PROPOS', 'NOS ENGAGEMENTS'].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="hover:text-emerald-700 transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-emerald-700 after:transition-all after:duration-300"
-              >
-                {item}
-              </a>
-            ))}
+            {[
+              { label: 'ACCUEIL', to: '/' },
+              { label: 'NOS GAMMES', to: '/catalog' },
+              { label: 'À PROPOS', to: '/about' },
+              { label: 'NOS ENGAGEMENTS', to: '/engagements' }
+            ].map((item) => {
+              const isActive = (item.to === '/' && pathname === '/') ||
+                               (item.to === '/about' && pathname === '/about') ||
+                               (item.to === '/engagements' && pathname === '/engagements') ||
+                               (item.to === '/catalog' && (pathname === '/catalog' || pathname.startsWith('/product')));
+              return (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className={`transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:bg-emerald-700 after:transition-all after:duration-300 ${
+                    isActive 
+                      ? 'text-emerald-700 after:w-full' 
+                      : 'text-black hover:text-emerald-700 after:w-0 hover:after:w-full'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Hamburger — mobile */}
@@ -57,13 +75,17 @@ const Header = () => {
 
           {/* Logo — center */}
           <div className="col-span-4 md:col-span-2 flex items-center justify-center">
-            <a href="#" aria-label="Unik - Accueil">
+            <Link
+              to="/"
+              aria-label="Unik - Accueil"
+              className="focus:outline-none"
+            >
               <img
                 src="/RiseGroup-18.png"
                 alt="Unik - Comme toi"
                 className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto object-contain select-none"
               />
-            </a>
+            </Link>
           </div>
 
           {/* Icons — right */}
@@ -98,22 +120,36 @@ const Header = () => {
         <div
           className="md:hidden bg-white border-t border-gray-100 px-6 py-6 flex flex-col space-y-5 animate-[fadeDown_0.2s_ease]"
         >
-          {['ACCUEIL', 'NOS GAMMES', 'À PROPOS', 'NOS ENGAGEMENTS'].map((item) => (
-            <a
-              key={item}
-              href="#"
-              onClick={() => setMenuOpen(false)}
-              className="text-sm font-semibold tracking-widest text-black hover:text-emerald-700 transition-colors border-b border-gray-100 pb-4"
-            >
-              {item}
-            </a>
-          ))}
-          <a
-            href="#"
-            className="text-xs font-semibold tracking-widest text-gray-500 hover:text-black transition-colors"
+          {[
+            { label: 'ACCUEIL', to: '/' },
+            { label: 'NOS GAMMES', to: '/catalog' },
+            { label: 'À PROPOS', to: '/about' },
+            { label: 'NOS ENGAGEMENTS', to: '/engagements' }
+          ].map((item) => {
+            const isActive = (item.to === '/' && pathname === '/') ||
+                             (item.to === '/about' && pathname === '/about') ||
+                             (item.to === '/engagements' && pathname === '/engagements') ||
+                             (item.to === '/catalog' && (pathname === '/catalog' || pathname.startsWith('/product')));
+            return (
+              <Link
+                key={item.label}
+                to={item.to}
+                onClick={() => setMenuOpen(false)}
+                className={`text-left text-sm font-semibold tracking-widest transition-colors border-b border-gray-100 pb-4 ${
+                  isActive ? 'text-emerald-700' : 'text-black hover:text-emerald-700'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+          <Link
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            className="text-left text-xs font-semibold tracking-widest text-gray-500 hover:text-black transition-colors"
           >
             BESOIN D'AIDE ?
-          </a>
+          </Link>
         </div>
       )}
     </header>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CategoryCard = ({
   bgColor,
@@ -8,6 +9,7 @@ const CategoryCard = ({
   description,
   imageSrc,
   imageAlt,
+  onSelectCategory,
 }) => (
   <div className={`relative flex flex-col sm:flex-row overflow-hidden ${bgColor} min-h-[280px] sm:h-[380px]`}>
     {/* Text */}
@@ -49,8 +51,8 @@ const CategoryCard = ({
       >
         {description}
       </p>
-      <a
-        href="#"
+      <button
+        onClick={() => onSelectCategory && onSelectCategory(title.toLowerCase())}
         style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -64,6 +66,11 @@ const CategoryCard = ({
           paddingBottom: '2px',
           width: 'fit-content',
           textDecoration: 'none',
+          cursor: 'pointer',
+          background: 'none',
+          borderTop: 'none',
+          borderLeft: 'none',
+          borderRight: 'none',
           transition: 'color 0.25s, border-color 0.25s',
         }}
         onMouseEnter={e => {
@@ -76,7 +83,7 @@ const CategoryCard = ({
         }}
       >
         DÉCOUVRIR <span style={{ fontSize: '14px', fontWeight: 300 }}>→</span>
-      </a>
+      </button>
     </div>
 
     {/* Image */}
@@ -100,6 +107,12 @@ const CategoryCard = ({
 );
 
 const Categories = () => {
+  const navigate = useNavigate();
+
+  const handleSelectCategory = (gamme) => {
+    navigate(`/catalog?gamme=${gamme}`);
+  };
+
   return (
     <section className="w-full bg-white">
       <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
@@ -111,6 +124,7 @@ const Categories = () => {
           description="Des soins ciblés pour stimuler la pousse, fortifier et sublimer vos cheveux jour après jour."
           imageSrc="/catg2.png"
           imageAlt="Gamme Capillaire Products"
+          onSelectCategory={handleSelectCategory}
         />
         <CategoryCard
           bgColor="bg-[#ecf2f8]"
@@ -120,6 +134,7 @@ const Categories = () => {
           description="Des soins dermatologiques haute efficacité pour purifier, hydrater et protéger toutes les peaux."
           imageSrc="/catg1.png"
           imageAlt="Gamme Dermatologique Products"
+          onSelectCategory={handleSelectCategory}
         />
       </div>
     </section>

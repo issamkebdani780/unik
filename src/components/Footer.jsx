@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -9,13 +10,13 @@ const Footer = () => {
 
           {/* Brand Info — full width on mobile */}
           <div className="col-span-2 sm:col-span-2 lg:col-span-4 space-y-4">
-            <a href="#" aria-label="Unik - Accueil">
+            <Link to="/" aria-label="Unik - Accueil">
               <img
                 src="/RiseGroup-18.png"
                 alt="Unik - Comme toi"
                 className="h-12 w-auto object-contain select-none"
               />
-            </a>
+            </Link>
 
             <p className="text-xs sm:text-sm text-gray-500 font-medium leading-relaxed">
               L'expertise dermatologique<br />
@@ -68,8 +69,8 @@ const Footer = () => {
           <div className="col-span-1 lg:col-span-2 space-y-4">
             <h4 className="text-[10px] font-extrabold tracking-widest text-black uppercase">NOS GAMMES</h4>
             <ul className="space-y-2.5">
-              <li><a href="#" className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">Gamme Capillaire</a></li>
-              <li><a href="#" className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">Gamme Dermatologique</a></li>
+              <li><Link to="/catalog?gamme=capillaire" className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">Gamme Capillaire</Link></li>
+              <li><Link to="/catalog?gamme=dermatologique" className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">Gamme Dermatologique</Link></li>
             </ul>
           </div>
 
@@ -77,8 +78,17 @@ const Footer = () => {
           <div className="col-span-1 lg:col-span-3 space-y-4">
             <h4 className="text-[10px] font-extrabold tracking-widest text-black uppercase">INFORMATIONS</h4>
             <ul className="space-y-2.5">
-              {['A propos', 'Nos engagements', 'Ingrédients', 'FAQ'].map((item) => (
-                <li key={item}><a href="#" className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">{item}</a></li>
+              {[
+                { label: 'A propos', to: '/about' },
+                { label: 'Nos engagements', to: '/engagements' },
+                { label: 'Ingrédients', to: '/catalog' },
+                { label: 'FAQ', to: '/' }
+              ].map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">
+                    {item.label}
+                  </Link>
+                </li>
               ))}
             </ul>
           </div>
