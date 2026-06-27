@@ -1,16 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import FloatingBackground from './FloatingBackground';
 
 const Hero = () => {
 
   return (
     <section className="w-full bg-[#fcfcfc] overflow-hidden relative">
+      <FloatingBackground gamme="all" />
+      
       {/* Background image — desktop only */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="hidden lg:block absolute top-0 right-0 w-[100vw] h-full z-0"
+        className="hidden lg:block absolute top-0 right-0 w-[100vw] h-full z-0 pointer-events-none"
       >
         <img
           src="/hero.png"
