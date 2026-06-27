@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { products } from '../data/products';
+import FloatingBackground from './FloatingBackground';
 
 const ProductCatalog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,13 +41,16 @@ const ProductCatalog = () => {
   };
 
   return (
-    <div className="w-full bg-[#fcfcfc] min-h-screen py-8 sm:py-12 animate-[fadeDown_0.3s_ease]">
-      {/* Header section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
+    <div className="w-full bg-[#fcfcfc] min-h-screen py-8 sm:py-12 animate-[fadeDown_0.3s_ease] relative overflow-hidden">
+      <FloatingBackground gamme={selectedGamme} />
+      
+      <div className="relative z-10">
+        {/* Header section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
         <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase block mb-3">
           UNIK COSMÉTIQUES
         </span>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black uppercase tracking-tight mb-4">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black uppercase tracking-tight mb-4 transition-colors duration-500">
           NOS FORMULATIONS
         </h1>
         <p className="text-gray-500 font-medium text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
@@ -61,14 +65,18 @@ const ProductCatalog = () => {
           <div className="flex flex-wrap gap-2 sm:gap-4">
             {[
               { id: 'all', label: 'TOUT VOIR' },
-              { id: 'capillaire', label: 'GAMME CAPILLAIRE', activeClass: 'text-[#3a7547] border-[#3a7547] bg-[#f0f4ea]' },
-              { id: 'dermatologique', label: 'GAMME DERMATOLOGIQUE', activeClass: 'text-[#296fc2] border-[#296fc2] bg-[#ecf2f8]' }
+              { id: 'capillaire', label: 'GAMME CAPILLAIRE' },
+              { id: 'dermatologique', label: 'GAMME DERMATOLOGIQUE' }
             ].map((tab) => {
               const isActive = selectedGamme === tab.id;
-              let btnClass = "px-4 py-2 text-[10px] sm:text-xs font-bold tracking-widest border transition-all duration-300 rounded-none cursor-pointer ";
+              let btnClass = "px-4 py-2 text-[10px] sm:text-xs font-bold tracking-widest border transition-colors duration-300 rounded-none cursor-pointer ";
               
               if (isActive) {
-                btnClass += tab.activeClass || "border-black bg-black text-white";
+                if (tab.id === 'all') {
+                  btnClass += "border-black bg-black text-white";
+                } else {
+                  btnClass += "text-brand-accent border-brand-accent bg-brand-light";
+                }
               } else {
                 btnClass += "border-gray-200 text-gray-500 hover:text-black hover:border-black bg-white";
               }
@@ -92,7 +100,7 @@ const ProductCatalog = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-white border border-gray-200 px-4 py-2 pr-8 text-xs font-bold tracking-wider text-black rounded-none focus:outline-none focus:border-black cursor-pointer"
+                className="appearance-none bg-white border border-gray-200 px-4 py-2 pr-8 text-xs font-bold tracking-wider text-black rounded-none focus:outline-none focus:border-brand-accent cursor-pointer transition-colors"
               >
                 <option value="recommended">RECOMMANDÉ</option>
                 <option value="price-asc">PRIX : CROISSANT</option>
@@ -115,6 +123,7 @@ const ProductCatalog = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-12 gap-x-8">
             {sortedProducts.map((product) => {
+              // Individual product badges stay true to their category color in 'all' view
               const isCapillaire = product.gamme === 'capillaire';
               const accentColor = isCapillaire ? 'text-[#3a7547]' : 'text-[#296fc2]';
               const cardBg = isCapillaire ? 'bg-[#f8faf6]' : 'bg-[#f5f8fc]';
@@ -157,7 +166,7 @@ const ProductCatalog = () => {
                     </span>
 
                     {/* Product name */}
-                    <h3 className="text-sm font-bold tracking-tight text-gray-900 uppercase group-hover:text-emerald-800 transition-colors line-clamp-1 mb-2">
+                    <h3 className="text-sm font-bold tracking-tight text-gray-900 uppercase group-hover:text-brand-accent transition-colors line-clamp-1 mb-2">
                       {product.name}
                     </h3>
 
@@ -184,7 +193,7 @@ const ProductCatalog = () => {
                       <span className="text-xs font-extrabold text-black">
                         {formatPrice(product.price)}
                       </span>
-                      <span className="text-[10px] font-bold text-black tracking-widest border-b border-black group-hover:text-emerald-700 group-hover:border-emerald-700 transition-colors uppercase pb-0.5">
+                      <span className="text-[10px] font-bold text-black tracking-widest border-b border-black group-hover:text-brand-accent group-hover:border-brand-accent transition-colors uppercase pb-0.5">
                         DÉCOUVRIR
                       </span>
                     </div>
@@ -194,6 +203,7 @@ const ProductCatalog = () => {
             })}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

@@ -69,14 +69,16 @@ const Footer = () => {
           <div className="col-span-1 lg:col-span-2 space-y-4">
             <h4 className="text-[10px] font-extrabold tracking-widest text-black uppercase">NOS GAMMES</h4>
             <ul className="space-y-2.5">
-              <li><Link to="/catalog?gamme=capillaire" className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">Gamme Capillaire</Link></li>
-              <li><Link to="/catalog?gamme=dermatologique" className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">Gamme Dermatologique</Link></li>
+              <li><Link to="/catalog?gamme=capillaire" className="text-xs sm:text-sm text-gray-500 hover:text-brand-accent transition-colors font-medium">Gamme Capillaire</Link></li>
+              <li><Link to="/catalog?gamme=dermatologique" className="text-xs sm:text-sm text-gray-500 hover:text-brand-accent transition-colors font-medium">Gamme Dermatologique</Link></li>
             </ul>
           </div>
 
           {/* INFORMATIONS */}
           <div className="col-span-1 lg:col-span-3 space-y-4">
-            <h4 className="text-[10px] font-extrabold tracking-widest text-black uppercase">INFORMATIONS</h4>
+            <h4 className="text-[10px] font-extrabold tracking-widest text-black uppercase">
+              INFORMATIONS
+            </h4>
             <ul className="space-y-2.5">
               {[
                 { label: 'A propos', to: '/about' },
@@ -85,7 +87,7 @@ const Footer = () => {
                 { label: 'FAQ', to: '/' }
               ].map((item) => (
                 <li key={item.label}>
-                  <Link to={item.to} className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">
+                  <Link to={item.to} className="text-xs sm:text-sm text-gray-500 hover:text-brand-accent transition-colors font-medium">
                     {item.label}
                   </Link>
                 </li>
@@ -95,10 +97,12 @@ const Footer = () => {
 
           {/* SERVICE CLIENT */}
           <div className="col-span-2 sm:col-span-1 lg:col-span-3 space-y-4">
-            <h4 className="text-[10px] font-extrabold tracking-widest text-black uppercase">SERVICE CLIENT</h4>
+            <h4 className="text-[10px] font-extrabold tracking-widest text-black uppercase">
+              SERVICE CLIENT
+            </h4>
             <ul className="space-y-2.5">
               {['Contact', 'Livraison & Retours', 'CGV', 'Politique de confidentialité'].map((item) => (
-                <li key={item}><a href="#" className="text-xs sm:text-sm text-gray-500 hover:text-emerald-700 transition-colors font-medium">{item}</a></li>
+                <li key={item}><a href="#" className="text-xs sm:text-sm text-gray-500 hover:text-brand-accent transition-colors font-medium">{item}</a></li>
               ))}
             </ul>
           </div>

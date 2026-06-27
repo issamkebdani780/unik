@@ -31,7 +31,7 @@ const About = () => {
                 L'histoire de Unik commence en laboratoire. Constatant que le marché des cosmétiques offrait trop souvent des solutions génériques, notre équipe de dermatologistes et de trichologues a souhaité formuler des soins ciblés, hautement concentrés et adaptés aux climats et besoins spécifiques de notre peau et de nos cheveux.
               </p>
               <p>
-                Le nom <strong className="text-black">UNIK</strong> est notre promesse : concevoir des soins qui célèbrent la diversité de vos textures capillaires et de vos spécificités épidermiques. Notre signature, <em className="text-emerald-800 font-semibold not-italic">"Comme toi"</em>, rappelle que votre rituel de beauté doit s'adapter à vous, et non l'inverse.
+                Le nom <strong className="text-black">UNIK</strong> est notre promesse : concevoir des soins qui célèbrent la diversité de vos textures capillaires et de vos spécificités épidermiques. Notre signature, <em className="text-brand-accent font-semibold not-italic">"Comme toi"</em>, rappelle que votre rituel de beauté doit s'adapter à vous, et non l'inverse.
               </p>
             </div>
             
@@ -47,7 +47,7 @@ const About = () => {
           </div>
 
           {/* Right Image */}
-          <div className="lg:col-span-6 h-[320px] sm:h-[450px] bg-[#f0f4ea] overflow-hidden border border-gray-100 flex items-center justify-center relative">
+          <div className="lg:col-span-6 h-[320px] sm:h-[450px] bg-brand-light transition-colors duration-500 overflow-hidden border border-gray-100 flex items-center justify-center relative">
             <img
               src="/about_lab.png"
               alt="Unik Laboratory Formulation Concept"
@@ -96,7 +96,7 @@ const About = () => {
         </div>
 
         {/* Call To Action Block */}
-        <div className="bg-[#ecf2f8] text-center p-8 sm:p-14 relative overflow-hidden flex flex-col items-center">
+        <div className="bg-brand-light transition-colors duration-500 text-center p-8 sm:p-14 relative overflow-hidden flex flex-col items-center">
           <div className="relative z-10 max-w-xl space-y-5">
             <h3 className="text-xl sm:text-2xl font-black text-black uppercase tracking-tight leading-none">
               DÉCOUVREZ L'EXPÉRIENCE UNIK

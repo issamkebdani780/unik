@@ -1,19 +1,31 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const Hero = () => {
+
   return (
     <section className="w-full bg-[#fcfcfc] overflow-hidden relative">
       {/* Background image — desktop only */}
-      <div className="hidden lg:block absolute top-0 right-0 w-[100vw] h-full z-0">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="hidden lg:block absolute top-0 right-0 w-[100vw] h-full z-0"
+      >
         <img
           src="/hero.png"
           alt="Gammes Unik Capillaire et Dermatologique"
           className="w-full h-full object-cover object-left"
         />
-      </div>
+      </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center py-10 sm:py-14 lg:py-20 lg:min-h-[650px]">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-12 items-center pt-36 pb-0 sm:pt-40  lg:pt-64 lg:pb-30 lg:min-h-[650px]"
+        >
 
           {/* Left Text Content */}
           <div className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 pr-0 lg:pr-8">
@@ -39,7 +51,7 @@ const Hero = () => {
 
             <a
               href="#"
-              className="inline-block bg-black text-white px-8 py-4 text-xs font-bold tracking-widest hover:bg-emerald-950 transition-colors uppercase duration-300 rounded-none shadow-sm"
+              className="inline-block bg-black text-white px-8 py-4 text-xs font-bold tracking-widest hover:bg-brand-hover transition-colors uppercase duration-300 rounded-none shadow-sm"
             >
               DÉCOUVRIR NOS GAMMES
             </a>
@@ -104,7 +116,7 @@ const Hero = () => {
             />
           </div>
 
-        </div>
+        </motion.div>
       </div>
     </section>
   );

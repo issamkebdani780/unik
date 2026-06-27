@@ -6,6 +6,49 @@
   --font-body: "Poppins", sans-serif;
 }
 
+:root {
+  --theme-accent: #047857;
+  --theme-hover: #065f46;
+  --theme-light: #f9fafb;
+  --theme-slogan: #065f46;
+}
+
+:root[data-theme="capillaire"] {
+  --theme-accent: #3a7547;
+  --theme-hover: #2d5a37;
+  --theme-light: #f0f4ea;
+  --theme-slogan: #3a7547;
+}
+
+:root[data-theme="dermatologique"] {
+  --theme-accent: #296fc2;
+  --theme-hover: #1e5291;
+  --theme-light: #ecf2f8;
+  --theme-slogan: #296fc2;
+}
+
+@utility text-brand-accent {
+  color: var(--theme-accent);
+}
+@utility bg-brand-accent {
+  background-color: var(--theme-accent);
+}
+@utility border-brand-accent {
+  border-color: var(--theme-accent);
+}
+@utility text-brand-hover {
+  color: var(--theme-hover);
+}
+@utility bg-brand-hover {
+  background-color: var(--theme-hover);
+}
+@utility bg-brand-light {
+  background-color: var(--theme-light);
+}
+@utility text-brand-slogan {
+  color: var(--theme-slogan);
+}
+
 body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;

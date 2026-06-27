@@ -29,7 +29,7 @@ const ProductDetail = () => {
         <p className="text-gray-500 text-sm mt-2">Le soin que vous recherchez n'existe pas ou a été déplacé.</p>
         <button
           onClick={() => navigate('/catalog')}
-          className="mt-6 inline-block bg-black text-white px-8 py-3 text-xs font-bold tracking-widest uppercase cursor-pointer hover:bg-emerald-950 transition-colors"
+          className="mt-6 inline-block bg-black text-white px-8 py-3 text-xs font-bold tracking-widest uppercase cursor-pointer hover:bg-brand-hover transition-colors"
         >
           RETOUR AUX SOINS
         </button>
@@ -307,7 +307,7 @@ const ProductDetail = () => {
                       <span className="text-[8px] font-semibold text-gray-400 tracking-wider mb-1">
                         {relProduct.activeIngredients.slice(0, 2).join(' • ')}
                       </span>
-                      <h3 className="text-xs font-bold tracking-tight text-gray-900 uppercase group-hover:text-emerald-800 transition-colors line-clamp-1 mb-2">
+                      <h3 className="text-xs font-bold tracking-tight text-gray-900 uppercase group-hover:text-brand-accent transition-colors line-clamp-1 mb-2">
                         {relProduct.name}
                       </h3>
                       <div className="flex items-center justify-between pt-2 border-t border-gray-50 mt-1">
