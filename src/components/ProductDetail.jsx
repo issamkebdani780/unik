@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { products } from '../data/products';
 
 const ProductDetail = () => {
@@ -10,6 +11,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeAccordion, setActiveAccordion] = useState('description');
   const [isAdded, setIsAdded] = useState(false);
+  const [flyingImage, setFlyingImage] = useState(null);
 
   // Scroll to top when product changes
   useEffect(() => {
@@ -52,7 +54,19 @@ const ProductDetail = () => {
     return price.toLocaleString('fr-FR') + ' DA';
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    if (e && e.currentTarget) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      // Start flying animation from the button center
+      setFlyingImage({
+        x: rect.left + rect.width / 2 - 20,
+        y: rect.top + rect.height / 2 - 20,
+        id: Date.now()
+      });
+      // Remove flying element after animation finishes
+      setTimeout(() => setFlyingImage(null), 1500);
+    }
+
     setIsAdded(true);
     setTimeout(() => {
       setIsAdded(false);
@@ -397,6 +411,19 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Flying Image to Cart Animation */}
+      {flyingImage && (
+        <motion.img
+          key={flyingImage.id}
+          src={product.image}
+          initial={{ x: flyingImage.x, y: flyingImage.y, scale: 1, opacity: 1 }}
+          animate={{ x: window.innerWidth - 70, y: 30, scale: 0.2, opacity: 0 }}
+          transition={{ duration: 1.2, ease: "backInOut" }}
+          className="fixed top-0 left-0 w-12 h-12 object-cover shadow-2xl rounded-sm border border-gray-200 pointer-events-none z-[9999]"
+          alt=""
+        />
       )}
 
     </div>
