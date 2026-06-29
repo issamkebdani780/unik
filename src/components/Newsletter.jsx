@@ -2,47 +2,92 @@ import React from 'react';
 
 const Newsletter = () => {
   return (
-    <section className="w-full py-14 md:py-20 relative overflow-hidden bg-gradient-to-r from-[#eef4fc] to-[#f4f8fe] border-t border-b border-gray-200/60">
+    <section className="w-full py-16 md:py-24 relative overflow-hidden bg-black border-t border-gray-900">
 
-      {/* Decorative product image — hidden on small screens to avoid overlap */}
-      <div className="hidden lg:block absolute top-1/2 -translate-y-1/2 left-8 xl:left-16 w-96 xl:w-[28rem] pointer-events-none z-0 select-none">
-        <img
-          src="/newsletter.png"
-          alt="Unik Sérum"
-          className="w-full h-auto object-contain scale-[1.5]"
-        />
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-white/5 blur-[120px]"></div>
+        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-brand-accent/10 blur-[100px]"></div>
       </div>
 
-      {/* Decorative bubbles */}
-      <div className="absolute right-[5%] top-[15%] w-14 h-14 rounded-full border border-white/60 bg-white/20 backdrop-blur-sm shadow-sm hidden sm:block pointer-events-none select-none" />
-      <div className="absolute right-[15%] bottom-[15%] w-20 h-20 rounded-full border border-white/50 bg-white/10 backdrop-blur-sm shadow-sm hidden md:block pointer-events-none select-none" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-end gap-8 lg:gap-16 py-2">
-
-          <div className="space-y-2 text-center lg:text-left max-w-xs sm:max-w-sm">
-            <h2 className="text-xl sm:text-2xl lg:text-[24px] font-extrabold tracking-tight text-black uppercase leading-tight">
-              REJOIGNEZ LA COMMUNAUTÉ UNIK
+        
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+          
+          {/* Left Text Content */}
+          <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left">
+            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase block mb-4">
+              VOTRE CERCLE PRIVÉ
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white uppercase tracking-tight leading-tight mb-6">
+              Rejoignez la communauté <span className="text-brand-accent">UNIK</span>
             </h2>
-            <p className="text-gray-500 font-semibold text-xs sm:text-sm">
-              Conseils beauté, nouveautés et offres exclusives rien que pour vous.
+            <p className="text-gray-400 font-medium text-sm sm:text-base leading-relaxed mb-8 max-w-lg">
+              Plus qu'une simple newsletter. En rejoignant notre communauté, vous entrez dans un cercle d'échanges dédié à la santé de votre peau et de vos cheveux.
             </p>
+            
+            {/* Value Props Checklist */}
+            <ul className="space-y-4 mb-10 text-left">
+              {[
+                { title: 'Contenu éducatif', desc: 'Décryptage d\'ingrédients et conseils routines.' },
+                { title: 'Avant-premières (Lancements & Drops)', desc: 'Soyez les premiers informés de nos nouveautés.' },
+                { title: 'Promotions exclusives', desc: 'Des offres réservées uniquement aux membres de la communauté.' }
+              ].map((item, i) => (
+                <li key={i} className="flex items-start">
+                  <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center mr-4 shrink-0 mt-0.5">
+                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span className="block text-sm font-bold text-white tracking-wide uppercase">{item.title}</span>
+                    <span className="block text-xs text-gray-400 mt-1">{item.desc}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <form className="w-full max-w-sm flex flex-col sm:flex-row gap-0 border border-gray-200 shadow-sm bg-white p-1 shrink-0">
-            <input
-              type="email"
-              placeholder="Votre e-mail"
-              className="flex-1 px-4 py-3 bg-white focus:outline-none text-xs sm:text-sm text-gray-800 min-w-0"
-              required
-            />
-            <button
-              type="submit"
-              className="bg-black text-white px-6 sm:px-8 py-3 text-xs font-bold tracking-widest hover:bg-brand-hover transition-colors whitespace-nowrap rounded-none uppercase duration-300"
-            >
-              S'INSCRIRE
-            </button>
-          </form>
+          {/* Right Form Container */}
+          <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
+            <div className="w-full max-w-md bg-[#111111] border border-white/10 p-8 sm:p-10 rounded-2xl shadow-2xl relative">
+              
+              <div className="text-center mb-8">
+                <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-2">
+                  Devenir membre
+                </h3>
+                <p className="text-xs text-gray-500 font-medium">
+                  Rejoignez des milliers d'autres membres dès aujourd'hui.
+                </p>
+              </div>
+
+              <form className="flex flex-col gap-4">
+                <div className="space-y-1">
+                  <label htmlFor="email" className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">
+                    Adresse e-mail
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Entrez votre e-mail..."
+                    className="w-full px-5 py-4 bg-[#1a1a1a] border border-white/5 rounded-xl focus:outline-none focus:border-brand-accent/50 text-sm text-white placeholder-gray-600 transition-colors"
+                    required
+                  />
+                </div>
+                
+                <button
+                  type="submit"
+                  className="w-full bg-white text-black mt-2 py-4 text-xs font-bold tracking-widest hover:bg-gray-200 transition-colors rounded-xl uppercase shadow-lg"
+                >
+                  REJOINDRE LA COMMUNAUTÉ
+                </button>
+                
+                <p className="text-[10px] text-gray-600 text-center mt-4 px-4 leading-relaxed">
+                  En rejoignant la communauté, vous acceptez notre politique de confidentialité. Vous pouvez vous désinscrire à tout moment.
+                </p>
+              </form>
+            </div>
+          </div>
 
         </div>
       </div>
