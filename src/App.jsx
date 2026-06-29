@@ -6,6 +6,7 @@ import BrandStory from './components/BrandStory';
 import ProductShowcase from './components/ProductShowcase';
 import Science from './components/Science';
 import UGCCommunity from './components/UGCCommunity';
+import Testimonials from './components/Testimonials';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
 import ProductCatalog from './components/ProductCatalog';
@@ -34,6 +35,7 @@ const Home = () => {
       <ProductShowcase />
       <Science />
       <UGCCommunity />
+      <Testimonials />
       <Newsletter />
     </>
   );
