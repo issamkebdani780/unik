@@ -528,11 +528,11 @@ const ProductDetail = () => {
                     onClick={() => navigate(`/product/${relProduct.id}`)}
                     className="group bg-[#1a1a1a] border border-gray-800 rounded-2xl overflow-hidden cursor-pointer hover:border-gray-600 transition-colors flex flex-col"
                   >
-                    <div className="w-full aspect-video overflow-hidden relative bg-black flex items-center justify-center p-6">
+                    <div className="w-full aspect-video overflow-hidden relative bg-black flex items-center justify-center">
                       <img
                         src={relProduct.image}
                         alt={relProduct.name}
-                        className="h-full w-auto object-contain object-center group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
                       <div className="absolute top-4 left-4">
