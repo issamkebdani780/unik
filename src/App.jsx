@@ -12,7 +12,6 @@ import Footer from './components/Footer';
 import ProductCatalog from './components/ProductCatalog';
 import ProductDetail from './components/ProductDetail';
 import About from './components/About';
-import Engagements from './components/Engagements';
 import { ThemeProvider } from './context/ThemeContext';
 
 // Helper component to scroll to top on route change
@@ -54,7 +53,6 @@ function App() {
             <Route path="/catalog" element={<ProductCatalog />} />
             <Route path="/product/:productId" element={<ProductDetail />} />
             <Route path="/about" element={<About />} />
-            <Route path="/engagements" element={<Engagements />} />
           </Routes>
         </main>
 
