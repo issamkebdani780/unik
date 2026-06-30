@@ -12,6 +12,7 @@ const ProductDetail = () => {
   const [activeAccordion, setActiveAccordion] = useState('description');
   const [isAdded, setIsAdded] = useState(false);
   const [flyingImage, setFlyingImage] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Scroll to top when product changes
   useEffect(() => {
@@ -21,6 +22,7 @@ const ProductDetail = () => {
       setProduct(foundProduct);
       setSelectedSize(foundProduct.sizes[0] || '');
       setQuantity(1);
+      setCurrentImageIndex(0);
     }
   }, [productId]);
 
@@ -77,11 +79,21 @@ const ProductDetail = () => {
     setActiveAccordion(activeAccordion === section ? null : section);
   };
 
+  const productImages = product?.images || [product?.image, '/about_lab.png', '/engagements_eco.png'];
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? productImages.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
+  };
+
   return (
     <div className="w-full bg-white animate-[fadeDown_0.3s_ease]">
       {/* 1. PRODUCT INFORMATION HERO */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-        
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6  sm:pt-10 sm:pb-4">
+
         {/* Breadcrumbs */}
         <nav className="flex items-center space-x-2 text-[10px] sm:text-xs font-semibold tracking-wider text-gray-400 uppercase mb-8 sm:mb-12">
           <Link to="/" className="hover:text-black transition-colors cursor-pointer">ACCUEIL</Link>
@@ -91,25 +103,62 @@ const ProductDetail = () => {
           <span className="text-gray-900 truncate max-w-[150px] sm:max-w-xs">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 mb-16">
-          
-          {/* Left: Product Images */}
-          <div className="lg:col-span-6 xl:col-span-7 flex flex-col">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
+
+          {/* Left: Product Images Carousel */}
+          <div className="lg:col-span-6 xl:col-span-7 flex flex-col relative group">
             <div className={`w-full aspect-[4/5] ${themeBgLight} overflow-hidden border border-gray-100 flex items-center justify-center relative rounded-sm`}>
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover object-center transition-all duration-700 hover:scale-105"
+              <motion.img
+                key={currentImageIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                src={productImages[currentImageIndex]}
+                alt={`${product.name} - Vue ${currentImageIndex + 1}`}
+                className="w-full h-full object-cover object-center"
               />
-              <span className={`absolute top-4 left-4 text-[9px] tracking-[0.18em] font-extrabold uppercase px-3 py-2 border shadow-sm ${themeBadgeText}`}>
+              <span className={`absolute top-4 left-4 text-[9px] tracking-[0.18em] font-extrabold uppercase px-3 py-2 border shadow-sm z-10 ${themeBadgeText}`}>
                 {product.gamme}
               </span>
+
+              {/* Carousel Navigation Arrows */}
+              {productImages.length > 1 && (
+                <>
+                  <button 
+                    onClick={handlePrevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full flex items-center justify-center text-black hover:bg-white transition-colors opacity-0 group-hover:opacity-100 cursor-pointer shadow-sm z-10"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                  </button>
+                  <button 
+                    onClick={handleNextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full flex items-center justify-center text-black hover:bg-white transition-colors opacity-0 group-hover:opacity-100 cursor-pointer shadow-sm z-10"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                  </button>
+                </>
+              )}
             </div>
+
+            {/* Carousel Dots */}
+            {productImages.length > 1 && (
+              <div className="flex justify-center items-center space-x-2 mt-4">
+                {productImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      currentImageIndex === idx ? 'bg-black w-6' : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right: Product Purchase Actions & Info */}
           <div className="lg:col-span-6 xl:col-span-5 flex flex-col space-y-6">
-            
+
             {/* Active Ingredients list badges */}
             <div className="flex flex-wrap gap-1.5">
               {product.activeIngredients.map((ing) => (
@@ -124,7 +173,7 @@ const ProductDetail = () => {
               <h1 className="text-2xl sm:text-3xl font-extrabold text-black uppercase tracking-tight leading-tight">
                 {product.name}
               </h1>
-              
+
               <div className="flex items-center space-x-2">
                 <div className="flex text-amber-400">
                   {[...Array(5)].map((_, i) => (
@@ -159,11 +208,10 @@ const ProductDetail = () => {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-5 py-2.5 text-xs font-bold tracking-wider border rounded-sm cursor-pointer transition-colors ${
-                      selectedSize === size
+                    className={`px-5 py-2.5 text-xs font-bold tracking-wider border rounded-sm cursor-pointer transition-colors ${selectedSize === size
                         ? 'border-black bg-black text-white'
                         : 'border-gray-200 text-gray-500 hover:border-black hover:text-black bg-white'
-                    }`}
+                      }`}
                   >
                     {size}
                   </button>
@@ -203,7 +251,7 @@ const ProductDetail = () => {
 
             {/* Collapsible Tabs for Deep Info */}
             <div className="pt-6 border-t border-gray-100 space-y-3">
-              
+
               {/* Description & Benefits tab */}
               <div className="border-b border-gray-100 pb-3">
                 <button onClick={() => toggleAccordion('description')} className="w-full flex justify-between items-center text-left text-xs font-bold tracking-widest text-black uppercase py-2 cursor-pointer">
@@ -258,43 +306,32 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      {/* 2. EDUCATION SECTION (La Science UNIK) */}
-      {product.education && (
+      {/* 2. HOW TO APPLY SECTION */}
+      {product.usage && (
         <div className={`w-full ${themeBgLight} py-16 sm:py-24 border-y border-black/5`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 sm:mb-16">
-              <span className={`text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase block mb-4 ${isCapillaire ? 'text-[#3a7547]' : 'text-[#296fc2]'}`}>
-                LA SCIENCE DERRIÈRE LA FORMULE
-              </span>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-black uppercase tracking-tight">
-                Décryptage de l'expertise
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-              <div className="bg-white p-8 rounded-2xl shadow-sm border border-black/5">
-                <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                  <span className="text-xl">🔬</span>
-                </div>
-                <h3 className="text-sm font-extrabold tracking-widest text-black uppercase mb-4">Pourquoi ces ingrédients ?</h3>
-                <p className="text-sm text-gray-600 font-medium leading-relaxed">{product.education.whyChosen}</p>
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+              
+              <div className="lg:w-1/3 text-center lg:text-left">
+                <span className={`text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase block mb-4 ${isCapillaire ? 'text-[#3a7547]' : 'text-[#296fc2]'}`}>
+                  VOTRE RITUEL BEAUTÉ
+                </span>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black uppercase tracking-tight leading-none mb-6">
+                  L'ART DE<br/>L'APPLICATION
+                </h2>
+                <div className={`hidden lg:block w-12 h-1 ${isCapillaire ? 'bg-[#3a7547]' : 'bg-[#296fc2]'}`}></div>
+              </div>
+              
+              <div className="lg:w-2/3 w-full bg-white p-8 sm:p-12 lg:p-16 relative shadow-sm border border-gray-100">
+                <div className={`absolute top-0 left-0 w-1 h-full ${isCapillaire ? 'bg-[#3a7547]' : 'bg-[#296fc2]'}`}></div>
+                <svg className={`absolute right-8 top-8 w-12 h-12 opacity-10 ${isCapillaire ? 'text-[#3a7547]' : 'text-[#296fc2]'}`} fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                </svg>
+                <p className="text-sm sm:text-base lg:text-lg text-gray-700 font-medium leading-relaxed relative z-10">
+                  {product.usage}
+                </p>
               </div>
 
-              <div className="bg-white p-8 rounded-2xl shadow-sm border border-black/5">
-                <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                  <span className="text-xl">⚙️</span>
-                </div>
-                <h3 className="text-sm font-extrabold tracking-widest text-black uppercase mb-4">Comment ça marche ?</h3>
-                <p className="text-sm text-gray-600 font-medium leading-relaxed">{product.education.howItWorks}</p>
-              </div>
-
-              <div className="bg-white p-8 rounded-2xl shadow-sm border border-black/5">
-                <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                  <span className="text-xl">💡</span>
-                </div>
-                <h3 className="text-sm font-extrabold tracking-widest text-black uppercase mb-4">L'origine de la formule</h3>
-                <p className="text-sm text-gray-600 font-medium leading-relaxed">{product.education.whyExists}</p>
-              </div>
             </div>
           </div>
         </div>
@@ -304,7 +341,7 @@ const ProductDetail = () => {
       {product.ugcVideo && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-            
+
             <div className="order-2 lg:order-1 flex justify-center">
               <div className="relative w-64 sm:w-80 aspect-[9/16] rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-gray-900 bg-black">
                 <img src={product.ugcVideo} alt="Démonstration" className="w-full h-full object-cover opacity-90" />
@@ -354,7 +391,7 @@ const ProductDetail = () => {
         <div className="bg-[#111111] py-20 sm:py-28 text-white border-t border-gray-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
-              
+
               <div className="lg:w-1/3 flex flex-col items-center lg:items-start text-center lg:text-left">
                 <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase block mb-4">
                   VOTRE RITUEL PERSONNALISÉ
@@ -366,7 +403,7 @@ const ProductDetail = () => {
                   {product.routine.text}
                 </p>
               </div>
-              
+
               <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
                 {routineProducts.map((relProduct) => (
                   <div
@@ -387,7 +424,7 @@ const ProductDetail = () => {
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="p-5 bg-[#1a1a1a] flex flex-col flex-1">
                       <h3 className="text-sm font-bold tracking-tight text-white uppercase group-hover:text-brand-accent transition-colors mb-2">
                         {relProduct.name}
