@@ -49,10 +49,12 @@ const Header = () => {
             {[
               { label: 'ACCUEIL', to: '/' },
               { label: 'NOS GAMMES', to: '/catalog' },
-              { label: 'À PROPOS', to: '/about' }
+              { label: 'À PROPOS', to: '/about' },
+              { label: 'FAQ', to: '/faq' }
             ].map((item) => {
               const isActive = (item.to === '/' && pathname === '/') ||
                 (item.to === '/about' && pathname === '/about') ||
+                (item.to === '/faq' && pathname === '/faq') ||
                 (item.to === '/catalog' && (pathname === '/catalog' || pathname.startsWith('/product')));
               return (
                 <Link
@@ -143,10 +145,12 @@ const Header = () => {
           {[
             { label: 'ACCUEIL', to: '/' },
             { label: 'NOS GAMMES', to: '/catalog' },
-            { label: 'À PROPOS', to: '/about' }
+            { label: 'À PROPOS', to: '/about' },
+            { label: 'FAQ', to: '/faq' }
           ].map((item) => {
             const isActive = (item.to === '/' && pathname === '/') ||
               (item.to === '/about' && pathname === '/about') ||
+              (item.to === '/faq' && pathname === '/faq') ||
               (item.to === '/catalog' && (pathname === '/catalog' || pathname.startsWith('/product')));
             return (
               <Link
