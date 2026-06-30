@@ -13,6 +13,8 @@ const ProductDetail = () => {
   const [isAdded, setIsAdded] = useState(false);
   const [flyingImage, setFlyingImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [newReview, setNewReview] = useState({ name: '', rating: 5, comment: '' });
+  const [reviewsList, setReviewsList] = useState([]);
 
   // Scroll to top when product changes
   useEffect(() => {
@@ -23,8 +25,17 @@ const ProductDetail = () => {
       setSelectedSize(foundProduct.sizes[0] || '');
       setQuantity(1);
       setCurrentImageIndex(0);
+      setReviewsList([]);
+      setNewReview({ name: '', rating: 5, comment: '' });
     }
   }, [productId]);
+
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    if (!newReview.name || !newReview.comment) return;
+    setReviewsList([...reviewsList, { ...newReview, date: new Date().toLocaleDateString('fr-FR') }]);
+    setNewReview({ name: '', rating: 5, comment: '' });
+  };
 
   if (!product) {
     return (
@@ -386,7 +397,113 @@ const ProductDetail = () => {
         </div>
       )}
 
-      {/* 4. PERSONALIZED ROUTINE SECTION */}
+      {/* 4. REVIEWS SECTION */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 border-t border-gray-100 bg-white">
+        <div className="text-center mb-12 sm:mb-16">
+          <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase block mb-4">
+            VOTRE AVIS COMPTE
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-black uppercase tracking-tight">
+            Avis Clients
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+          
+          {/* Left: Review Form */}
+          <div className="bg-gray-50 p-8 sm:p-10 rounded-2xl border border-gray-100">
+            <h3 className="text-lg font-extrabold tracking-widest text-black uppercase mb-6">Laissez un avis</h3>
+            <form onSubmit={handleReviewSubmit} className="space-y-6">
+              
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Votre Note</label>
+                <div className="flex space-x-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      type="button"
+                      key={star}
+                      onClick={() => setNewReview({ ...newReview, rating: star })}
+                      className="cursor-pointer"
+                    >
+                      <svg className={`w-8 h-8 transition-colors ${newReview.rating >= star ? 'text-amber-400 fill-current' : 'text-gray-300 stroke-current'}`} viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nom</label>
+                <input 
+                  type="text" 
+                  required
+                  value={newReview.name}
+                  onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                  className="w-full border border-gray-200 p-4 rounded-sm text-sm focus:outline-none focus:border-black transition-colors"
+                  placeholder="Votre nom"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Commentaire</label>
+                <textarea 
+                  required
+                  rows="4"
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                  className="w-full border border-gray-200 p-4 rounded-sm text-sm focus:outline-none focus:border-black transition-colors resize-none"
+                  placeholder="Partagez votre expérience..."
+                ></textarea>
+              </div>
+
+              <button 
+                type="submit"
+                className={`w-full text-white text-xs font-extrabold tracking-widest uppercase py-4 rounded-sm shadow-sm transition-all duration-300 cursor-pointer ${themeBtnHover}`}
+                style={{ backgroundColor: themeColor }}
+              >
+                Publier l'avis
+              </button>
+            </form>
+          </div>
+
+          {/* Right: Reviews List */}
+          <div className="flex flex-col space-y-8">
+            <h3 className="text-lg font-extrabold tracking-widest text-black uppercase mb-2">Avis Récents ({product.reviewsCount + reviewsList.length})</h3>
+            
+            {reviewsList.length === 0 ? (
+              <div className="bg-gray-50/50 rounded-2xl p-8 border border-gray-100 flex flex-col items-center justify-center text-center h-full min-h-[250px]">
+                <span className="text-3xl mb-4">💬</span>
+                <p className="text-sm font-medium text-gray-500">Aucun avis récent pour le moment.<br/>Soyez le premier à partager votre expérience !</p>
+              </div>
+            ) : (
+              <div className="space-y-6 max-h-[600px] overflow-y-auto pr-2">
+                {reviewsList.slice().reverse().map((review, idx) => (
+                  <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <p className="text-sm font-bold text-black uppercase tracking-wider">{review.name}</p>
+                        <p className="text-[10px] text-gray-400 font-medium mt-1">{review.date}</p>
+                      </div>
+                      <div className="flex text-amber-400">
+                        {[...Array(5)].map((_, i) => (
+                          <svg key={i} className={`w-3.5 h-3.5 ${i < review.rating ? 'fill-current' : 'text-gray-200 stroke-current'}`} viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 font-medium leading-relaxed">"{review.comment}"</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
+        </div>
+      </div>
+
+      {/* 5. PERSONALIZED ROUTINE SECTION */}
       {routineProducts.length > 0 && product.routine && (
         <div className="bg-[#111111] py-20 sm:py-28 text-white border-t border-gray-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
