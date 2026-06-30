@@ -18,18 +18,9 @@ const Header = () => {
   // Header background color with opacity transition
   const headerBgOpacity = useTransform(scrollY, [0, 150], [isHome ? 0 : 1, 1]);
 
-  // Header background color with opacity transition
-  const headerBgColor = useTransform(
-    scrollY,
-    [0, 150],
-    [isHome ? "rgba(255, 255, 255, 0)" : "rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)"]
-  );
-
-  const headerBorderColor = useTransform(
-    scrollY,
-    [0, 150],
-    [isHome ? "rgba(243, 244, 246, 0)" : "rgba(243, 244, 246, 1)", "rgba(243, 244, 246, 1)"]
-  );
+  // Header background color
+  const headerBgColor = "rgba(255, 255, 255, 1)";
+  const headerBorderColor = "rgba(243, 244, 246, 1)";
 
   return (
     <motion.header
