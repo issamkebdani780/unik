@@ -31,10 +31,10 @@ const Home = () => {
   return (
     <>
       <Hero />
-      <BrandStory />
       <ProductShowcase />
       <Science />
       <UGCCommunity />
+      <BrandStory />
       <Testimonials />
       <Newsletter />
     </>

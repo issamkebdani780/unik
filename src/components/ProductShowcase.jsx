@@ -83,10 +83,10 @@ const ProductShowcase = () => {
   return (
     <section className="w-full bg-white flex flex-col">
       {/* Slice 1: Dermatologique (Text Left, Products Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
+      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[#296fc2]/10 bg-[#ecf2f8]/50">
         
         {/* Text Block */}
-        <div className="flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 sm:py-24 bg-[#ecf2f8]/30">
+        <div className="flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 sm:py-24">
           <span className="text-[10px] font-bold tracking-[0.2em] text-[#296fc2] uppercase block mb-4">
             NOTRE GAMME DERMATOLOGIQUE
           </span>
@@ -108,7 +108,7 @@ const ProductShowcase = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="px-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center bg-white">
+        <div className="px-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 w-full max-w-2xl">
             {dermaProducts.map(product => (
               <ShowcaseCard key={product.id} product={product} isMobile={isMobile} />
@@ -118,10 +118,10 @@ const ProductShowcase = () => {
       </div>
 
       {/* Slice 2: Capillaire (Products Left, Text Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x lg:divide-x-reverse divide-gray-200">
+      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x lg:divide-x-reverse divide-[#3a7547]/10 bg-[#f0f4ea]/60">
         
         {/* Products Grid (Order 2 on mobile, Order 1 on desktop) */}
-        <div className="order-2 lg:order-1 px-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center bg-white">
+        <div className="order-2 lg:order-1 px-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 w-full max-w-2xl">
             {capillaireProducts.map(product => (
               <ShowcaseCard key={product.id} product={product} isMobile={isMobile} />
@@ -130,7 +130,7 @@ const ProductShowcase = () => {
         </div>
 
         {/* Text Block (Order 1 on mobile, Order 2 on desktop) */}
-        <div className="order-1 lg:order-2 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 sm:py-24 bg-[#f0f4ea]/40">
+        <div className="order-1 lg:order-2 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 sm:py-24">
           <span className="text-[10px] font-bold tracking-[0.2em] text-[#3a7547] uppercase block mb-4">
             NOTRE GAMME CAPILLAIRE
           </span>
