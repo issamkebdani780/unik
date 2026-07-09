@@ -7,10 +7,10 @@
 }
 
 :root {
-  --theme-accent: #047857;
-  --theme-hover: #065f46;
-  --theme-light: #f9fafb;
-  --theme-slogan: #065f46;
+  --theme-accent: #3a7547;
+  --theme-hover: #2d5a37;
+  --theme-light: #f0f4ea;
+  --theme-slogan: #3a7547;
 }
 
 :root[data-theme="capillaire"] {

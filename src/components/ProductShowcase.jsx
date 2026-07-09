@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useAnimation } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { products } from '../data/products';
 
 const ShowcaseCard = ({ product, isMobile }) => {
@@ -25,16 +25,28 @@ const ShowcaseCard = ({ product, isMobile }) => {
   return (
     <motion.div
       onClick={() => navigate(`/product/${product.id}`)}
-      className="group flex flex-col bg-white border border-gray-100/60 overflow-hidden relative cursor-pointer shadow-sm"
+      className="group flex flex-col bg-white border border-gray-100/60 overflow-hidden relative cursor-pointer shadow-sm w-[55vw] sm:w-auto snap-center shrink-0"
       {...desktopHoverProps}
       {...mobileScrollProps}
       layout
     >
-      <div className={`w-full aspect-[4/5] overflow-hidden relative ${cardBg} transition-colors duration-300`}>
+      <div className={`w-full aspect-square overflow-hidden relative ${cardBg} transition-colors duration-300`}>
+        {/* Added custom style for the hover pan animation */}
+        <style>{`
+          @keyframes panImage {
+            0% { object-position: 50% 0%; }
+            50% { object-position: 50% 100%; }
+            100% { object-position: 50% 0%; }
+          }
+          .group:hover .hover-pan {
+            animation: panImage 8s ease-in-out infinite;
+            transform: scale(1.15);
+          }
+        `}</style>
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover object-top transition-transform duration-700 hover-pan"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -81,10 +93,10 @@ const ProductShowcase = () => {
   const capillaireProducts = products.filter(p => p.gamme === 'capillaire').slice(0, 2);
 
   return (
-    <section className="w-full bg-white flex flex-col">
+    <section className="w-full bg-white flex flex-col overflow-hidden">
       {/* Slice 1: Dermatologique (Text Left, Products Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[#296fc2]/10 bg-[#ecf2f8]/50">
-        
+      <div className="grid grid-cols-1 lg:grid-cols-2 bg-[#ecf2f8]/50">
+
         {/* Text Block */}
         <div className="flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 sm:py-24">
           <span className="text-[10px] font-bold tracking-[0.2em] text-[#296fc2] uppercase block mb-4">
@@ -94,8 +106,8 @@ const ProductShowcase = () => {
             La Science au Service de Votre Peau
           </h2>
           <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8 max-w-md font-medium">
-            Formulés en laboratoire par nos experts, nos soins dermatologiques intègrent des actifs de pointe 
-            pour purifier, hydrater en profondeur et réparer la barrière cutanée. Une efficacité prouvée pour 
+            Formulés en laboratoire par nos experts, nos soins dermatologiques intègrent des actifs de pointe
+            pour purifier, hydrater en profondeur et réparer la barrière cutanée. Une efficacité prouvée pour
             les peaux les plus exigeantes.
           </p>
           <button
@@ -108,8 +120,8 @@ const ProductShowcase = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="px-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 w-full max-w-2xl">
+        <div className="pl-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center overflow-hidden">
+          <div className="flex overflow-x-auto sm:grid sm:grid-cols-2 gap-4 sm:gap-6 w-full max-w-xl snap-x snap-mandatory pr-6 sm:pr-0 pb-6 sm:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {dermaProducts.map(product => (
               <ShowcaseCard key={product.id} product={product} isMobile={isMobile} />
             ))}
@@ -118,11 +130,11 @@ const ProductShowcase = () => {
       </div>
 
       {/* Slice 2: Capillaire (Products Left, Text Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x lg:divide-x-reverse divide-[#3a7547]/10 bg-[#f0f4ea]/60">
-        
+      <div className="grid grid-cols-1 lg:grid-cols-2 bg-[#f0f4ea]/60">
+
         {/* Products Grid (Order 2 on mobile, Order 1 on desktop) */}
-        <div className="order-2 lg:order-1 px-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 w-full max-w-2xl">
+        <div className="order-2 lg:order-1 pl-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center overflow-hidden">
+          <div className="flex overflow-x-auto sm:grid sm:grid-cols-2 gap-4 sm:gap-6 w-full max-w-xl snap-x snap-mandatory pr-6 sm:pr-0 pb-6 sm:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {capillaireProducts.map(product => (
               <ShowcaseCard key={product.id} product={product} isMobile={isMobile} />
             ))}
@@ -138,8 +150,8 @@ const ProductShowcase = () => {
             La Nature pour vos Cheveux
           </h2>
           <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8 max-w-md font-medium">
-            Des formulations riches en extraits botaniques et vitamines pour cibler 
-            les problèmes capillaires à la racine. Fortifiez, nourrissez et ravivez 
+            Des formulations riches en extraits botaniques et vitamines pour cibler
+            les problèmes capillaires à la racine. Fortifiez, nourrissez et ravivez
             la brillance naturelle de vos cheveux avec nos soins ciblés.
           </p>
           <button

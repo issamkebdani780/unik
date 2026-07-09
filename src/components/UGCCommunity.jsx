@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 const UGCCommunity = () => {
+  const scrollContainerRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
+
   const videos = [
     {
       id: 1,
@@ -49,6 +52,39 @@ const UGCCommunity = () => {
   // We duplicate the array to create a seamless infinite loop
   const duplicatedVideos = [...videos, ...videos];
 
+  useEffect(() => {
+    let animationFrameId;
+    const container = scrollContainerRef.current;
+
+    const scroll = () => {
+      if (container && !isPaused) {
+        container.scrollLeft += 1;
+        
+        // Reset scroll position when reaching the end of the first set
+        if (container.scrollLeft >= container.scrollWidth / 2) {
+          container.scrollLeft -= container.scrollWidth / 2;
+        }
+      }
+      animationFrameId = requestAnimationFrame(scroll);
+    };
+
+    animationFrameId = requestAnimationFrame(scroll);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isPaused]);
+
+  const handlePrev = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' });
+    }
+  };
+
+  const handleNext = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="w-full bg-[#fcfcfc] py-20 sm:py-32 overflow-hidden border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12 sm:mb-16">
@@ -64,12 +100,21 @@ const UGCCommunity = () => {
         </p>
       </div>
 
-      <div className="relative w-full overflow-hidden group">
+      <div 
+        className="relative w-full group"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+      >
         {/* Gradients for smooth fading on edges */}
         <div className="absolute top-0 left-0 h-full w-12 sm:w-32 bg-gradient-to-r from-[#fcfcfc] to-transparent z-10 pointer-events-none"></div>
         <div className="absolute top-0 right-0 h-full w-12 sm:w-32 bg-gradient-to-l from-[#fcfcfc] to-transparent z-10 pointer-events-none"></div>
 
-        <div className="animate-marquee py-4">
+        <div 
+          ref={scrollContainerRef}
+          className="flex overflow-x-auto py-8 px-4 sm:px-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
           {duplicatedVideos.map((video, index) => (
             <a
               key={index}
@@ -81,14 +126,14 @@ const UGCCommunity = () => {
               <img
                 src={video.image}
                 alt={`Video by ${video.handle}`}
-                className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700 pointer-events-none"
               />
               
               {/* Overlay Gradient for readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
 
               {/* Play Button Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none">
                 <div className="w-14 h-14 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
                   <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
@@ -97,7 +142,7 @@ const UGCCommunity = () => {
               </div>
 
               {/* Video Info (Handle, Views, Caption) */}
-              <div className="absolute bottom-0 left-0 w-full p-5 text-left">
+              <div className="absolute bottom-0 left-0 w-full p-5 text-left pointer-events-none">
                 <div className="flex items-center space-x-2 mb-2">
                   <div className="w-8 h-8 rounded-full border-2 border-white overflow-hidden">
                     <img src={video.image} alt="Avatar" className="w-full h-full object-cover" />
@@ -119,6 +164,30 @@ const UGCCommunity = () => {
               </div>
             </a>
           ))}
+        </div>
+
+        {/* Navigation Controls */}
+        <div className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-8 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button 
+            onClick={handlePrev}
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center shadow-lg text-black hover:bg-black hover:text-white transition-colors duration-300 border border-gray-100"
+            aria-label="Vidéo précédente"
+          >
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        </div>
+        <div className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-8 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button 
+            onClick={handleNext}
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center shadow-lg text-black hover:bg-black hover:text-white transition-colors duration-300 border border-gray-100"
+            aria-label="Vidéo suivante"
+          >
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
     </section>

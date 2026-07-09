@@ -121,7 +121,7 @@ const ProductCatalog = () => {
             <p className="text-gray-500 text-sm font-medium">Aucun produit trouvé dans cette catégorie.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-12 gap-x-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-4 sm:gap-y-12 sm:gap-x-8">
             {sortedProducts.map((product) => {
               // Individual product badges stay true to their category color in 'all' view
               const isCapillaire = product.gamme === 'capillaire';
@@ -136,10 +136,21 @@ const ProductCatalog = () => {
                 >
                   {/* Image wrapper */}
                   <div className={`w-full aspect-[4/5] overflow-hidden relative ${cardBg} transition-colors duration-300`}>
+                    <style>{`
+                      @keyframes panImage {
+                        0% { object-position: 50% 0%; }
+                        50% { object-position: 50% 100%; }
+                        100% { object-position: 50% 0%; }
+                      }
+                      .group:hover .hover-pan {
+                        animation: panImage 8s ease-in-out infinite;
+                        transform: scale(1.15);
+                      }
+                    `}</style>
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover object-top transition-transform duration-700 hover-pan"
                       loading="lazy"
                     />
                     

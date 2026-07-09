@@ -15,6 +15,29 @@ const ProductDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [newReview, setNewReview] = useState({ name: '', rating: 5, comment: '' });
   const [reviewsList, setReviewsList] = useState([]);
+  const scrollContainerRef = React.useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const productImages = product?.images || [product?.image, '/about_lab.png', '/engagements_eco.png'];
+
+  // Auto-scroll functionality
+  useEffect(() => {
+    if (isPaused || productImages.length <= 1) return;
+
+    const interval = setInterval(() => {
+      // Find current index directly from scroll position to avoid state staleness
+      if (!scrollContainerRef.current) return;
+      const scrollPosition = scrollContainerRef.current.scrollLeft;
+      const width = scrollContainerRef.current.clientWidth;
+      const index = Math.round(scrollPosition / width);
+      const next = index === productImages.length - 1 ? 0 : index + 1;
+      
+      scrollContainerRef.current.scrollTo({ left: width * next, behavior: 'smooth' });
+      setCurrentImageIndex(next);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [isPaused, productImages.length]);
 
   // Scroll to top when product changes
   useEffect(() => {
@@ -90,14 +113,31 @@ const ProductDetail = () => {
     setActiveAccordion(activeAccordion === section ? null : section);
   };
 
-  const productImages = product?.images || [product?.image, '/about_lab.png', '/engagements_eco.png'];
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const scrollPosition = scrollContainerRef.current.scrollLeft;
+    const width = scrollContainerRef.current.clientWidth;
+    const index = Math.round(scrollPosition / width);
+    if (index !== currentImageIndex) {
+      setCurrentImageIndex(index);
+    }
+  };
+
+  const scrollToImage = (index) => {
+    if (!scrollContainerRef.current) return;
+    const width = scrollContainerRef.current.clientWidth;
+    scrollContainerRef.current.scrollTo({ left: width * index, behavior: 'smooth' });
+    setCurrentImageIndex(index);
+  };
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? productImages.length - 1 : prev - 1));
+    const prev = currentImageIndex === 0 ? productImages.length - 1 : currentImageIndex - 1;
+    scrollToImage(prev);
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
+    const next = currentImageIndex === productImages.length - 1 ? 0 : currentImageIndex + 1;
+    scrollToImage(next);
   };
 
   return (
@@ -118,16 +158,29 @@ const ProductDetail = () => {
 
           {/* Left: Product Images Carousel */}
           <div className="lg:col-span-6 xl:col-span-7 flex flex-col relative group">
-            <div className={`w-full aspect-[4/5] ${themeBgLight} overflow-hidden border border-gray-100 flex items-center justify-center relative rounded-sm`}>
-              <motion.img
-                key={currentImageIndex}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                src={productImages[currentImageIndex]}
-                alt={`${product.name} - Vue ${currentImageIndex + 1}`}
-                className="w-full h-full object-cover object-center"
-              />
+            <div 
+              className={`w-full aspect-[4/5] ${themeBgLight} overflow-hidden border border-gray-100 relative rounded-sm`}
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
+              onTouchStart={() => setIsPaused(true)}
+              onTouchEnd={() => setIsPaused(false)}
+            >
+              
+              <div 
+                ref={scrollContainerRef}
+                onScroll={handleScroll}
+                className="flex overflow-x-auto snap-x snap-mandatory w-full h-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
+              >
+                {productImages.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`${product.name} - Vue ${idx + 1}`}
+                    className="w-full h-full object-cover object-center flex-shrink-0 snap-center"
+                  />
+                ))}
+              </div>
+
               <span className={`absolute top-4 left-4 text-[9px] tracking-[0.18em] font-extrabold uppercase px-3 py-2 border shadow-sm z-10 ${themeBadgeText}`}>
                 {product.gamme}
               </span>
@@ -137,13 +190,13 @@ const ProductDetail = () => {
                 <>
                   <button 
                     onClick={handlePrevImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full flex items-center justify-center text-black hover:bg-white transition-colors opacity-0 group-hover:opacity-100 cursor-pointer shadow-sm z-10"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full flex items-center justify-center text-black hover:bg-white transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer shadow-sm z-10"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
                   </button>
                   <button 
                     onClick={handleNextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full flex items-center justify-center text-black hover:bg-white transition-colors opacity-0 group-hover:opacity-100 cursor-pointer shadow-sm z-10"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full flex items-center justify-center text-black hover:bg-white transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer shadow-sm z-10"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                   </button>
@@ -157,7 +210,7 @@ const ProductDetail = () => {
                 {productImages.map((_, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
+                    onClick={() => scrollToImage(idx)}
                     className={`w-2 h-2 rounded-full transition-all duration-300 ${
                       currentImageIndex === idx ? 'bg-black w-6' : 'bg-gray-300 hover:bg-gray-400'
                     }`}

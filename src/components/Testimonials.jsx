@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+// motion and AnimatePresence can be kept imported or removed, but we don't need them anymore
 
 const reviews = [
   {
@@ -55,24 +55,41 @@ const reviews = [
 ];
 
 const Testimonials = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
+  const scrollContainerRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
 
-  // Autoplay logic
+  const duplicatedReviews = [...reviews, ...reviews];
+
   useEffect(() => {
-    if (isHovered) return;
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % reviews.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [isHovered]);
+    let animationFrameId;
+    const container = scrollContainerRef.current;
+
+    const scroll = () => {
+      if (container && !isPaused) {
+        container.scrollLeft += 1;
+        
+        if (container.scrollLeft >= container.scrollWidth / 2) {
+          container.scrollLeft -= container.scrollWidth / 2;
+        }
+      }
+      animationFrameId = requestAnimationFrame(scroll);
+    };
+
+    animationFrameId = requestAnimationFrame(scroll);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isPaused]);
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % reviews.length);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
+    }
   };
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -400, behavior: 'smooth' });
+    }
   };
 
   const StarIcon = () => (
@@ -93,113 +110,63 @@ const Testimonials = () => {
       </div>
 
       <div 
-        className="relative w-full max-w-5xl mx-auto h-[450px] sm:h-[400px] flex items-center justify-center"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        className="relative w-full group"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
       >
-        <AnimatePresence>
-          {reviews.map((review, index) => {
-            // Calculate relative position
-            let diff = index - activeIndex;
-            if (diff < -2) diff += reviews.length;
-            if (diff > 2) diff -= reviews.length;
+        {/* Gradients for smooth fading on edges */}
+        <div className="absolute top-0 left-0 h-full w-12 sm:w-32 bg-gradient-to-r from-[#fcfcfc] to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 h-full w-12 sm:w-32 bg-gradient-to-l from-[#fcfcfc] to-transparent z-10 pointer-events-none"></div>
 
-            const isCenter = diff === 0;
-            const isLeft = diff === -1;
-            const isRight = diff === 1;
-            
-            // Determine styles based on position
-            let xOffset = "0%";
-            let scale = 0;
-            let opacity = 0;
-            let zIndex = 0;
-            let blur = "blur(0px)";
-
-            if (isCenter) {
-              xOffset = "0%";
-              scale = 1;
-              opacity = 1;
-              zIndex = 20;
-            } else if (isLeft) {
-              xOffset = "-105%";
-              scale = 0.85;
-              opacity = 0.4;
-              zIndex = 10;
-              blur = "blur(2px)";
-            } else if (isRight) {
-              xOffset = "105%";
-              scale = 0.85;
-              opacity = 0.4;
-              zIndex = 10;
-              blur = "blur(2px)";
-            } else if (diff < -1) {
-              xOffset = "-150%";
-              scale = 0.6;
-              opacity = 0;
-              zIndex = 0;
-            } else if (diff > 1) {
-              xOffset = "150%";
-              scale = 0.6;
-              opacity = 0;
-              zIndex = 0;
-            }
-
-            return (
-              <motion.div
-                key={review.id}
-                initial={false}
-                animate={{
-                  x: xOffset,
-                  scale: scale,
-                  opacity: opacity,
-                  zIndex: zIndex,
-                  filter: blur
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="absolute w-[90%] sm:w-[500px] bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-gray-100"
-                style={{
-                  pointerEvents: isCenter ? 'auto' : 'none'
-                }}
-              >
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex space-x-1">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <StarIcon key={i} />
-                    ))}
-                  </div>
-                  <span className="text-[10px] font-bold tracking-widest text-brand-accent uppercase bg-brand-light px-3 py-1 rounded-full">
-                    {review.product}
-                  </span>
+        <div 
+          ref={scrollContainerRef}
+          className="flex overflow-x-auto py-12 px-4 sm:px-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden items-center"
+        >
+          {duplicatedReviews.map((review, index) => (
+            <div
+              key={`${review.id}-${index}`}
+              className="relative flex-shrink-0 w-[85vw] sm:w-[500px] mx-3 sm:mx-6 bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-gray-100 transition-transform duration-300 hover:-translate-y-2"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex space-x-1">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <StarIcon key={i} />
+                  ))}
                 </div>
+                <span className="text-[10px] font-bold tracking-widest text-brand-accent uppercase bg-brand-light px-3 py-1 rounded-full">
+                  {review.product}
+                </span>
+              </div>
 
-                <h3 className="text-xl font-bold text-black mb-4">"{review.title}"</h3>
-                <p className="text-gray-500 font-medium text-sm leading-relaxed mb-8">
-                  {review.text}
-                </p>
+              <h3 className="text-xl font-bold text-black mb-4">"{review.title}"</h3>
+              <p className="text-gray-500 font-medium text-sm leading-relaxed mb-8">
+                {review.text}
+              </p>
 
-                <div className="flex items-center space-x-4">
-                  <img 
-                    src={review.image} 
-                    alt={review.name} 
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div>
-                    <p className="text-sm font-bold text-black">{review.name}</p>
-                    <p className="text-xs text-gray-400 font-medium flex items-center mt-1">
-                      <svg className="w-3 h-3 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                      {review.role}
-                    </p>
-                  </div>
+              <div className="flex items-center space-x-4">
+                <img 
+                  src={review.image} 
+                  alt={review.name} 
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+                <div>
+                  <p className="text-sm font-bold text-black">{review.name}</p>
+                  <p className="text-xs text-gray-400 font-medium flex items-center mt-1">
+                    <svg className="w-3 h-3 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {review.role}
+                  </p>
                 </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* Navigation Controls */}
-        <div className="absolute top-1/2 -translate-y-1/2 left-4 sm:-left-4 lg:-left-12 z-30">
+        <div className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-8 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button 
             onClick={handlePrev}
             className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center shadow-lg text-black hover:bg-black hover:text-white transition-colors duration-300 border border-gray-100"
@@ -210,7 +177,7 @@ const Testimonials = () => {
             </svg>
           </button>
         </div>
-        <div className="absolute top-1/2 -translate-y-1/2 right-4 sm:-right-4 lg:-right-12 z-30">
+        <div className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-8 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button 
             onClick={handleNext}
             className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center shadow-lg text-black hover:bg-black hover:text-white transition-colors duration-300 border border-gray-100"
