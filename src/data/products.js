@@ -178,5 +178,125 @@ export const products = [
     ingredients: 'Aqua, 3-O-Ethyl Ascorbic Acid, Ferulic Acid, Tocopherol, Hyaluronic Acid, Aloe Barbadensis Leaf Juice, Ethoxydiglycol, Phenoxyethanol, Triethanolamine, Disodium EDTA.',
     sizes: ['30ml'],
     image: '/dermato_gel.png'
+  },
+  {
+    id: 'der-cica',
+    name: 'CRÈME CICA-LIPIDIQUE',
+    gamme: 'dermatologique',
+    price: 3100,
+    rating: 4.8,
+    reviewsCount: 64,
+    activeIngredients: ['Centella Asiatica', 'Panthénol (5%)', 'Madécassoside'],
+    shortDescription: 'Répare intensément, apaise et protège les peaux abîmées ou irritées.',
+    description: 'Un soin SOS formulé pour réparer la barrière cutanée des peaux sèches, irritées ou agressées. Il accélère la régénération de l’épiderme tout en soulageant instantanément les inconforts.',
+    benefits: [
+      'Favorise la cicatrisation cutanée',
+      'Soulage les irritations dès la première application',
+      'Forme une barrière protectrice non grasse'
+    ],
+    education: {
+      whyChosen: "La Centella Asiatica et son extrait purifié, le Madécassoside, sont de formidables stimulants de la synthèse de collagène. Le Panthénol à 5% apaise instantanément.",
+      howItWorks: "Il forme un film protecteur respirant qui empêche les bactéries de se fixer tout en maintenant un taux d'hydratation optimal nécessaire à la reconstruction cellulaire.",
+      whyExists: "Les peaux altérées par le froid, les gommages excessifs ou les traitements dermatologiques ont besoin d'un soin barrière neutre mais hautement régénérant."
+    },
+    ugcVideo: 'https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?auto=format&fit=crop&w=400&q=80',
+    routine: {
+      ids: ['der-gel', 'der-cream'],
+      text: "Pour réparer efficacement votre peau, nettoyez-la avec un gel ultra-doux avant d'appliquer votre baume Cica :"
+    },
+    usage: 'Appliquez matin et soir sur les zones sèches, irritées ou sensibilisées sur une peau propre.',
+    ingredients: 'Aqua, Panthenol, Glycerin, Centella Asiatica Extract, Madecassoside, Squalane, Cetearyl Alcohol, Stearic Acid, Ceramide NP.',
+    sizes: ['40ml'],
+    image: '/catg1.png'
+  },
+  {
+    id: 'der-toner',
+    name: 'TONIQUE HYDRATANT APAISANT',
+    gamme: 'dermatologique',
+    price: 2200,
+    rating: 4.7,
+    reviewsCount: 53,
+    activeIngredients: ['Acide Hyaluronique', 'Extrait de Camomille', 'Niacinamide'],
+    shortDescription: 'Rééquilibre le pH de la peau, hydrate et apaise après le nettoyage.',
+    description: 'Cette lotion tonique sans alcool prépare idéalement la peau à recevoir ses soins. Elle apporte une première vague d’hydratation intense et calme les peaux sujettes aux rougeurs.',
+    benefits: [
+      'Rééquilibre le pH cutané',
+      'Hydratation immédiate de surface',
+      'Atténue les rougeurs post-nettoyage'
+    ],
+    education: {
+      whyChosen: "L'Acide Hyaluronique repulpe l'épiderme en retenant l'eau. La Camomille et la Niacinamide calment les irritations causées par l'eau calcaire.",
+      howItWorks: "Elle pénètre instantanément pour assouplir la couche cornée, permettant une meilleure pénétration des sérums appliqués par la suite.",
+      whyExists: "Le calcaire présent dans l'eau de rinçage assèche et irrite la peau. Un tonique rééquilibrant est l'étape indispensable après le nettoyage."
+    },
+    ugcVideo: 'https://images.unsplash.com/photo-1580870058864-1596541f5a54?auto=format&fit=crop&w=400&q=80',
+    routine: {
+      ids: ['der-gel', 'der-cream'],
+      text: "Appliquez après notre gel nettoyant purifiant et faites suivre de notre crème hydratante apaisante :"
+    },
+    usage: 'Matin et soir, après le nettoyage, appliquez sur l’ensemble du visage à l’aide d’un coton ou en tapotant avec les doigts.',
+    ingredients: 'Aqua, Glycerin, Niacinamide, Sodium Hyaluronate, Chamomilla Recutita Flower Extract, Panthenol, Phenoxyethanol, Citric Acid.',
+    sizes: ['200ml'],
+    image: '/dermato_gel.png'
+  },
+  {
+    id: 'cap-oil',
+    name: 'HUILE NUTRITIVE SUBLIME',
+    gamme: 'capillaire',
+    price: 3200,
+    rating: 4.9,
+    reviewsCount: 110,
+    activeIngredients: ['Huile d’Avocat', 'Huile de Jojoba', 'Vitamine E'],
+    shortDescription: 'Nourrit intensément, scelle l’hydratation et apporte brillance et douceur aux longueurs.',
+    description: 'Une huile capillaire légère formulée pour protéger et sublimer les cheveux secs, ternes ou abîmés. Elle protège de la chaleur et redonne douceur et brillance instantanément.',
+    benefits: [
+      'Protection thermique jusqu\'à 220°C',
+      'Fini soyeux sans effet gras',
+      'Dompte les frisottis durablement'
+    ],
+    education: {
+      whyChosen: "L'Huile d'Avocat est hautement pénétrante et nourrit la fibre en profondeur. Le Jojoba régule et protège en imitant le sébum naturel.",
+      howItWorks: "Elle scelle l'eau à l'intérieur de la fibre capillaire en formant un micro-film lipidique protecteur tout en lissant les cuticules.",
+      whyExists: "Les brushings répétés et les agressions extérieures dessèchent les pointes. Il manquait un soin protecteur quotidien ultra-léger."
+    },
+    ugcVideo: 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=400&q=80',
+    routine: {
+      ids: ['cap-shampoo', 'cap-mask'],
+      text: "L'huile s'applique idéalement après le shampooing et le masque pour sceller définitivement la nutrition :"
+    },
+    usage: 'Appliquez quelques gouttes sur cheveux humides ou secs, en insistant sur les mi-longueurs et les pointes. Ne pas rincer.',
+    ingredients: 'Cyclopentasiloxane, Dimethiconol, Persea Gratissima Oil, Simmondsia Chinensis Seed Oil, Tocopheryl Acetate, Fragrance.',
+    sizes: ['50ml'],
+    image: '/capillaire_serum.png'
+  },
+  {
+    id: 'cap-conditioner',
+    name: 'SOIN DÉMÊLANT BRILLANCE',
+    gamme: 'capillaire',
+    price: 1950,
+    rating: 4.7,
+    reviewsCount: 42,
+    activeIngredients: ['Protéines de Soie', 'Aloé Vera', 'Thé Vert'],
+    shortDescription: 'Démêle instantanément, lisse les écailles et apporte légèreté et brillance.',
+    description: 'Cet après-shampooing démêle en douceur et apporte de la brillance aux cheveux normaux à secs sans les alourdir. Idéal pour un usage fréquent.',
+    benefits: [
+      'Démêlage ultra-rapide en 1 minute',
+      'Cheveux légers, souples et brillants',
+      'Hydrate sans alourdir la fibre'
+    ],
+    education: {
+      whyChosen: "Les Protéines de Soie enveloppent le cheveu pour lisser sa texture. L'Aloé Vera hydrate en profondeur avec ses vitamines et nutriments.",
+      howItWorks: "Il comble les micro-brèches cuticulaires instantanément pour permettre au peigne de glisser sans casser le cheveu.",
+      whyExists: "Les masques profonds peuvent être trop lourds pour un usage quotidien. Nous voulions un soin express efficace après chaque lavage."
+    },
+    ugcVideo: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80',
+    routine: {
+      ids: ['cap-shampoo', 'cap-oil'],
+      text: "Complétez votre lavage quotidien avec ce soin express suivi de quelques gouttes d'huile protectrice :"
+    },
+    usage: 'Après le shampooing, appliquez sur cheveux essorés des mi-longueurs aux pointes. Laissez agir 1 à 2 minutes puis rincez abondamment.',
+    ingredients: 'Aqua, Cetearyl Alcohol, Glycerin, Aloe Barbadensis Leaf Juice, Silk Amino Acids, Camellia Sinensis Leaf Extract, Behentrimonium Chloride, Citric Acid, Sodium Benzoate.',
+    sizes: ['250ml'],
+    image: '/catg2.png'
   }
 ];

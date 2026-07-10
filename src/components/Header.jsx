@@ -61,9 +61,9 @@ const Header = () => {
                   <Link
                     key={item.label}
                     to={item.to}
-                    className={`transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:bg-brand-accent after:transition-all after:duration-300 ${isActive
-                      ? 'text-brand-accent after:w-full'
-                      : 'text-black hover:text-brand-accent after:w-0 hover:after:w-full'
+                    className={`transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:bg-black after:transition-all after:duration-300 ${isActive
+                      ? 'text-black font-bold after:w-full'
+                      : 'text-black hover:font-bold after:w-0 hover:after:w-full'
                       }`}
                   >
                     {item.label}
@@ -184,7 +184,7 @@ const Header = () => {
                       key={item.label}
                       to={item.to}
                       onClick={() => setMenuOpen(false)}
-                      className={`text-left text-base font-semibold tracking-widest transition-colors pb-2 border-b border-gray-50 ${isActive ? 'text-brand-accent' : 'text-black hover:text-brand-accent'
+                      className={`text-left text-base tracking-widest transition-colors pb-2 border-b border-gray-50 ${isActive ? 'text-black font-bold' : 'text-black font-semibold hover:font-bold'
                         }`}
                     >
                       {item.label}

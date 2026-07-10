@@ -17,6 +17,18 @@ const ProductDetail = () => {
   const [reviewsList, setReviewsList] = useState([]);
   const scrollContainerRef = React.useRef(null);
   const [isPaused, setIsPaused] = useState(false);
+  const routineScrollContainerRef = React.useRef(null);
+  const [isRoutinePaused, setIsRoutinePaused] = useState(false);
+
+  // Find personalized routine products (and append other catalog products to make it scrollable like UGCCommunity)
+  const routineProducts = (() => {
+    if (!product || !product.routine) return [];
+    const directIds = product.routine.ids || [];
+    const direct = products.filter(p => directIds.includes(p.id));
+    const sameGamme = products.filter(p => p.gamme === product.gamme && p.id !== product.id && !directIds.includes(p.id));
+    const otherGamme = products.filter(p => p.gamme !== product.gamme && p.id !== product.id && !directIds.includes(p.id));
+    return [...direct, ...sameGamme, ...otherGamme];
+  })();
 
   const productImages = product?.images || [product?.image, '/about_lab.png', '/engagements_eco.png'];
 
@@ -31,13 +43,36 @@ const ProductDetail = () => {
       const width = scrollContainerRef.current.clientWidth;
       const index = Math.round(scrollPosition / width);
       const next = index === productImages.length - 1 ? 0 : index + 1;
-      
+
       scrollContainerRef.current.scrollTo({ left: width * next, behavior: 'smooth' });
       setCurrentImageIndex(next);
     }, 3500);
 
     return () => clearInterval(interval);
   }, [isPaused, productImages.length]);
+
+  // Auto-scroll for routine section (matching UGCCommunity logic)
+  useEffect(() => {
+    let animationFrameId;
+    const container = routineScrollContainerRef.current;
+    if (!container || routineProducts.length <= 1) return;
+
+    const scroll = () => {
+      if (container && !isRoutinePaused) {
+        container.scrollLeft += 1;
+        
+        // Reset scroll position when reaching the end of the first set of items
+        if (container.scrollLeft >= container.scrollWidth / 2) {
+          container.scrollLeft -= container.scrollWidth / 2;
+        }
+      }
+      animationFrameId = requestAnimationFrame(scroll);
+    };
+
+    animationFrameId = requestAnimationFrame(scroll);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isRoutinePaused, routineProducts.length]);
 
   // Scroll to top when product changes
   useEffect(() => {
@@ -81,10 +116,6 @@ const ProductDetail = () => {
   const themeBadgeText = isCapillaire ? 'text-[#3a7547] bg-[#f0f4ea]/80 border-[#3a7547]/20' : 'text-[#296fc2] bg-[#ecf2f8]/80 border-[#296fc2]/20';
   const themeBtnHover = isCapillaire ? 'hover:bg-[#3a7547]' : 'hover:bg-[#296fc2]';
 
-  // Find personalized routine products
-  const routineProducts = product.routine?.ids
-    ? products.filter(p => product.routine.ids.includes(p.id))
-    : [];
 
   const formatPrice = (price) => {
     return price.toLocaleString('fr-FR') + ' DA';
@@ -140,6 +171,18 @@ const ProductDetail = () => {
     scrollToImage(next);
   };
 
+  const handleRoutinePrev = () => {
+    if (routineScrollContainerRef.current) {
+      routineScrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' });
+    }
+  };
+
+  const handleRoutineNext = () => {
+    if (routineScrollContainerRef.current) {
+      routineScrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="w-full bg-white animate-[fadeDown_0.3s_ease]">
       {/* 1. PRODUCT INFORMATION HERO */}
@@ -158,15 +201,15 @@ const ProductDetail = () => {
 
           {/* Left: Product Images Carousel */}
           <div className="lg:col-span-6 xl:col-span-7 flex flex-col relative group">
-            <div 
+            <div
               className={`w-full aspect-[4/5] ${themeBgLight} overflow-hidden border border-gray-100 relative rounded-sm`}
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
               onTouchStart={() => setIsPaused(true)}
               onTouchEnd={() => setIsPaused(false)}
             >
-              
-              <div 
+
+              <div
                 ref={scrollContainerRef}
                 onScroll={handleScroll}
                 className="flex overflow-x-auto snap-x snap-mandatory w-full h-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
@@ -188,13 +231,13 @@ const ProductDetail = () => {
               {/* Carousel Navigation Arrows */}
               {productImages.length > 1 && (
                 <>
-                  <button 
+                  <button
                     onClick={handlePrevImage}
                     className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full flex items-center justify-center text-black hover:bg-white transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer shadow-sm z-10"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
                   </button>
-                  <button 
+                  <button
                     onClick={handleNextImage}
                     className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full flex items-center justify-center text-black hover:bg-white transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer shadow-sm z-10"
                   >
@@ -211,9 +254,8 @@ const ProductDetail = () => {
                   <button
                     key={idx}
                     onClick={() => scrollToImage(idx)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      currentImageIndex === idx ? 'bg-black w-6' : 'bg-gray-300 hover:bg-gray-400'
-                    }`}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${currentImageIndex === idx ? 'bg-black w-6' : 'bg-gray-300 hover:bg-gray-400'
+                      }`}
                   />
                 ))}
               </div>
@@ -263,7 +305,7 @@ const ProductDetail = () => {
             </p>
 
             {/* Size Selector */}
-            <div className="space-y-3 pt-2">
+            {/* <div className="space-y-3 pt-2">
               <span className="text-[10px] font-extrabold tracking-widest text-black uppercase">
                 CONTENANCE :
               </span>
@@ -281,7 +323,7 @@ const ProductDetail = () => {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* Quantity and Cart button */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
@@ -375,17 +417,17 @@ const ProductDetail = () => {
         <div className={`w-full ${themeBgLight} py-16 sm:py-24 border-y border-black/5`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-              
+
               <div className="lg:w-1/3 text-center lg:text-left">
                 <span className={`text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase block mb-4 ${isCapillaire ? 'text-[#3a7547]' : 'text-[#296fc2]'}`}>
                   VOTRE RITUEL BEAUTÉ
                 </span>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black uppercase tracking-tight leading-none mb-6">
-                  L'ART DE<br/>L'APPLICATION
+                  L'ART DE<br />L'APPLICATION
                 </h2>
                 <div className={`hidden lg:block w-12 h-1 ${isCapillaire ? 'bg-[#3a7547]' : 'bg-[#296fc2]'}`}></div>
               </div>
-              
+
               <div className="lg:w-2/3 w-full bg-white p-8 sm:p-12 lg:p-16 relative shadow-sm border border-gray-100">
                 <div className={`absolute top-0 left-0 w-1 h-full ${isCapillaire ? 'bg-[#3a7547]' : 'bg-[#296fc2]'}`}></div>
                 <svg className={`absolute right-8 top-8 w-12 h-12 opacity-10 ${isCapillaire ? 'text-[#3a7547]' : 'text-[#296fc2]'}`} fill="currentColor" viewBox="0 0 24 24">
@@ -462,72 +504,14 @@ const ProductDetail = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
-          
-          {/* Left: Review Form */}
-          <div className="bg-gray-50 p-8 sm:p-10 rounded-2xl border border-gray-100">
-            <h3 className="text-lg font-extrabold tracking-widest text-black uppercase mb-6">Laissez un avis</h3>
-            <form onSubmit={handleReviewSubmit} className="space-y-6">
-              
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Votre Note</label>
-                <div className="flex space-x-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      type="button"
-                      key={star}
-                      onClick={() => setNewReview({ ...newReview, rating: star })}
-                      className="cursor-pointer"
-                    >
-                      <svg className={`w-8 h-8 transition-colors ${newReview.rating >= star ? 'text-amber-400 fill-current' : 'text-gray-300 stroke-current'}`} viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nom</label>
-                <input 
-                  type="text" 
-                  required
-                  value={newReview.name}
-                  onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
-                  className="w-full border border-gray-200 p-4 rounded-sm text-sm focus:outline-none focus:border-black transition-colors"
-                  placeholder="Votre nom"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Commentaire</label>
-                <textarea 
-                  required
-                  rows="4"
-                  value={newReview.comment}
-                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
-                  className="w-full border border-gray-200 p-4 rounded-sm text-sm focus:outline-none focus:border-black transition-colors resize-none"
-                  placeholder="Partagez votre expérience..."
-                ></textarea>
-              </div>
-
-              <button 
-                type="submit"
-                className={`w-full text-white text-xs font-extrabold tracking-widest uppercase py-4 rounded-sm shadow-sm transition-all duration-300 cursor-pointer ${themeBtnHover}`}
-                style={{ backgroundColor: themeColor }}
-              >
-                Publier l'avis
-              </button>
-            </form>
-          </div>
-
           {/* Right: Reviews List */}
           <div className="flex flex-col space-y-8">
             <h3 className="text-lg font-extrabold tracking-widest text-black uppercase mb-2">Avis Récents ({product.reviewsCount + reviewsList.length})</h3>
-            
+
             {reviewsList.length === 0 ? (
               <div className="bg-gray-50/50 rounded-2xl p-8 border border-gray-100 flex flex-col items-center justify-center text-center h-full min-h-[250px]">
                 <span className="text-3xl mb-4">💬</span>
-                <p className="text-sm font-medium text-gray-500">Aucun avis récent pour le moment.<br/>Soyez le premier à partager votre expérience !</p>
+                <p className="text-sm font-medium text-gray-500">Aucun avis récent pour le moment.<br />Soyez le premier à partager votre expérience !</p>
               </div>
             ) : (
               <div className="space-y-6 max-h-[600px] overflow-y-auto pr-2">
@@ -552,72 +536,169 @@ const ProductDetail = () => {
               </div>
             )}
           </div>
-          
+
+          {/* Left: Review Form */}
+          <div className="bg-gray-50 p-8 sm:p-10 rounded-2xl border border-gray-100">
+            <h3 className="text-lg font-extrabold tracking-widest text-black uppercase mb-6">Laissez un avis</h3>
+            <form onSubmit={handleReviewSubmit} className="space-y-6">
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Votre Note</label>
+                <div className="flex space-x-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      type="button"
+                      key={star}
+                      onClick={() => setNewReview({ ...newReview, rating: star })}
+                      className="cursor-pointer"
+                    >
+                      <svg className={`w-8 h-8 transition-colors ${newReview.rating >= star ? 'text-amber-400 fill-current' : 'text-gray-300 stroke-current'}`} viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nom</label>
+                <input
+                  type="text"
+                  required
+                  value={newReview.name}
+                  onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                  className="w-full border border-gray-200 p-4 rounded-sm text-sm focus:outline-none focus:border-black transition-colors"
+                  placeholder="Votre nom"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Commentaire</label>
+                <textarea
+                  required
+                  rows="4"
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                  className="w-full border border-gray-200 p-4 rounded-sm text-sm focus:outline-none focus:border-black transition-colors resize-none"
+                  placeholder="Partagez votre expérience..."
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                className={`w-full text-white text-xs font-extrabold tracking-widest uppercase py-4 rounded-sm shadow-sm transition-all duration-300 cursor-pointer ${themeBtnHover}`}
+                style={{ backgroundColor: themeColor }}
+              >
+                Publier l'avis
+              </button>
+            </form>
+          </div>
+
+
+
         </div>
       </div>
 
       {/* 5. PERSONALIZED ROUTINE SECTION */}
       {routineProducts.length > 0 && product.routine && (
-        <div className="bg-[#111111] py-20 sm:py-28 text-white border-t border-gray-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+        <section className="w-full bg-[#111111] py-20 sm:py-32 overflow-hidden border-t border-gray-900">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12 sm:mb-16">
+            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-500 uppercase block mb-4">
+              VOTRE RITUEL PERSONNALISÉ
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white uppercase tracking-tight leading-tight">
+              Construisez votre routine
+            </h2>
+            <p className="mt-4 text-sm sm:text-base text-gray-400 font-medium max-w-2xl mx-auto">
+              {product.routine.text}
+            </p>
+          </div>
 
-              <div className="lg:w-1/3 flex flex-col items-center lg:items-start text-center lg:text-left">
-                <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase block mb-4">
-                  VOTRE RITUEL PERSONNALISÉ
-                </span>
-                <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight leading-tight mb-6 text-white">
-                  Construisez votre routine
-                </h2>
-                <p className="text-gray-400 font-medium text-sm sm:text-base leading-relaxed mb-8">
-                  {product.routine.text}
-                </p>
-              </div>
+          <div 
+            className="relative w-full group"
+            onMouseEnter={() => setIsRoutinePaused(true)}
+            onMouseLeave={() => setIsRoutinePaused(false)}
+            onTouchStart={() => setIsRoutinePaused(true)}
+            onTouchEnd={() => setIsRoutinePaused(false)}
+          >
+            {/* Gradients for smooth fading on edges */}
+            <div className="absolute top-0 left-0 h-full w-12 sm:w-32 bg-gradient-to-r from-[#111111] to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 h-full w-12 sm:w-32 bg-gradient-to-l from-[#111111] to-transparent z-10 pointer-events-none"></div>
 
-              <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
-                {routineProducts.map((relProduct) => (
-                  <div
-                    key={relProduct.id}
-                    onClick={() => navigate(`/product/${relProduct.id}`)}
-                    className="group bg-[#1a1a1a] border border-gray-800 rounded-2xl overflow-hidden cursor-pointer hover:border-gray-600 transition-colors flex flex-col"
-                  >
-                    <div className="w-full aspect-video overflow-hidden relative bg-black flex items-center justify-center">
-                      <img
-                        src={relProduct.image}
-                        alt={relProduct.name}
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
-                      <div className="absolute top-4 left-4">
-                        <span className="text-[8px] tracking-[0.15em] font-extrabold uppercase px-2 py-1 bg-white/10 text-white rounded-sm backdrop-blur-md">
-                          Étape Complémentaire
-                        </span>
-                      </div>
-                    </div>
+            <div 
+              ref={routineScrollContainerRef}
+              className="flex overflow-x-auto py-8 px-4 sm:px-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
+            >
+              {[...routineProducts, ...routineProducts].map((relProduct, index) => (
+                <div
+                  key={`${relProduct.id}-${index}`}
+                  onClick={() => navigate(`/product/${relProduct.id}`)}
+                  className="relative w-64 h-96 sm:w-72 sm:h-[450px] mx-3 sm:mx-4 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex-shrink-0 cursor-pointer group/card block"
+                >
+                  {/* Image Thumbnail */}
+                  <img
+                    src={relProduct.image}
+                    alt={relProduct.name}
+                    className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700 pointer-events-none"
+                  />
+                  
+                  {/* Overlay Gradient for readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent pointer-events-none"></div>
 
-                    <div className="p-5 bg-[#1a1a1a] flex flex-col flex-1">
-                      <h3 className="text-sm font-bold tracking-tight text-white uppercase group-hover:text-brand-accent transition-colors mb-2">
-                        {relProduct.name}
-                      </h3>
-                      <p className="text-xs text-gray-400 line-clamp-2 mb-4 font-medium flex-1">
-                        {relProduct.shortDescription}
-                      </p>
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-800">
-                        <span className="text-sm font-extrabold text-white">
-                          {formatPrice(relProduct.price)}
-                        </span>
-                        <span className="text-[9px] font-bold text-white border-b border-white uppercase pb-0.5">
-                          DÉCOUVRIR
-                        </span>
-                      </div>
+                  {/* Badge */}
+                  <div className="absolute top-4 left-4 z-10">
+                    <span className="text-[8px] tracking-[0.15em] font-extrabold uppercase px-2.5 py-1.5 bg-black/40 text-white rounded-sm backdrop-blur-md">
+                      Étape Complémentaire
+                    </span>
+                  </div>
+
+                  {/* Product Info Overlay */}
+                  <div className="absolute bottom-0 left-0 w-full p-5 text-left pointer-events-none z-10">
+                    <h3 className="text-sm font-bold tracking-tight text-white uppercase group-hover/card:text-brand-accent transition-colors mb-2">
+                      {relProduct.name}
+                    </h3>
+                    <p className="text-[11px] text-gray-300 line-clamp-2 mb-4 font-medium leading-relaxed">
+                      {relProduct.shortDescription}
+                    </p>
+                    <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                      <span className="text-sm font-extrabold text-white">
+                        {formatPrice(relProduct.price)}
+                      </span>
+                      <span className="text-[9px] font-bold text-white border-b border-white uppercase pb-0.5">
+                        DÉCOUVRIR
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
-
+                </div>
+              ))}
             </div>
+
+            {/* Navigation Controls */}
+            <div className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-8 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button 
+                onClick={handleRoutinePrev}
+                className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center shadow-lg text-black hover:bg-black hover:text-white transition-colors duration-300 border border-gray-100 cursor-pointer"
+                aria-label="Produit précédent"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
+            <div className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-8 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button 
+                onClick={handleRoutineNext}
+                className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center shadow-lg text-black hover:bg-black hover:text-white transition-colors duration-300 border border-gray-100 cursor-pointer"
+                aria-label="Produit suivant"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
           </div>
-        </div>
+        </section>
       )}
 
       {/* Flying Image to Cart Animation */}
