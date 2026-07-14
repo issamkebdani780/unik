@@ -7,17 +7,17 @@
 }
 
 :root {
-  --theme-accent: #3a7547;
-  --theme-hover: #2d5a37;
+  --theme-accent: #76cb5a;
+  --theme-hover: #60a849;
   --theme-light: #f0f4ea;
-  --theme-slogan: #3a7547;
+  --theme-slogan: #76cb5a;
 }
 
 :root[data-theme="capillaire"] {
-  --theme-accent: #3a7547;
-  --theme-hover: #2d5a37;
+  --theme-accent: #76cb5a;
+  --theme-hover: #60a849;
   --theme-light: #f0f4ea;
-  --theme-slogan: #3a7547;
+  --theme-slogan: #76cb5a;
 }
 
 :root[data-theme="dermatologique"] {

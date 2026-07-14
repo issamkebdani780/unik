@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const pathname = location.pathname;
   const isHome = pathname === '/';
+  const { theme } = useTheme();
 
   // Scroll animations
   const { scrollY } = useScroll();
@@ -103,7 +105,7 @@ const Header = () => {
                   className="focus:outline-none block"
                 >
                   <img
-                    src="/RiseGroup-18.png"
+                    src={theme === 'capillaire' ? '/logovert.png' : theme === 'dermatologique' ? '/logoblue.png' : '/RiseGroup-18.png'}
                     alt="Unik - Comme toi"
                     className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto object-contain select-none"
                   />
@@ -161,7 +163,7 @@ const Header = () => {
               className="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm bg-white z-[70] md:hidden flex flex-col shadow-2xl"
             >
               <div className="p-6 flex justify-between items-center border-b border-gray-100">
-                <img src="/RiseGroup-18.png" alt="Unik" className="h-8 object-contain" />
+                <img src={theme === 'capillaire' ? '/logovert.png' : theme === 'dermatologique' ? '/logoblue.png' : '/RiseGroup-18.png'} alt="Unik" className="h-8 object-contain" />
                 <button onClick={() => setMenuOpen(false)} className="p-2 -mr-2 text-gray-500 hover:text-black focus:outline-none">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />

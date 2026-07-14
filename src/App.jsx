@@ -13,6 +13,7 @@ import ProductCatalog from './components/ProductCatalog';
 import ProductDetail from './components/ProductDetail';
 import About from './components/About';
 import FAQ from './components/FAQ';
+import EmailPopup from './components/EmailPopup';
 import { ThemeProvider } from './context/ThemeContext';
 
 // Helper component to scroll to top on route change
@@ -59,6 +60,7 @@ function App() {
         </main>
 
         <Footer />
+        <EmailPopup />
       </div>
     </ThemeProvider>
   );
