@@ -15,11 +15,20 @@ const Hero = () => {
         transition={{ duration: 0.8 }}
         className="hidden lg:block absolute top-0 right-0 w-[100vw] h-full z-0 pointer-events-none"
       >
-        <img
-          src="/hero.png"
-          alt="Gammes Unik Capillaire et Dermatologique"
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
           className="w-full h-full object-cover object-left"
-        />
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+          <img
+            src="/hero.png"
+            alt="Gammes Unik Capillaire et Dermatologique"
+            className="w-full h-full object-cover object-left"
+          />
+        </video>
       </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -30,8 +39,28 @@ const Hero = () => {
           className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-12 items-center pt-36 pb-0 sm:pt-40  lg:pt-64 lg:pb-30 lg:min-h-[650px]"
         >
 
-          {/* Left Text Content */}
-          <div className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 pr-0 lg:pr-8">
+         
+
+          {/* Hero video — mobile/tablet only */}
+          <div className="lg:hidden w-full max-w-sm mx-auto aspect-[9/16] rounded-2xl overflow-hidden shadow-sm">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover object-center"
+            >
+              <source src="/hero-video.mp4" type="video/mp4" />
+              <img
+                src="/hero.png"
+                alt="Gammes Unik Capillaire et Dermatologique"
+                className="w-full h-full object-cover object-center"
+              />
+            </video>
+          </div>
+
+           {/* Left Text Content */}
+          <div className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 pr-0 lg:pr-8 pt-9">
             <div className="space-y-1 w-full">
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-black tracking-tight leading-none uppercase">
                 L'EXPERTISE
@@ -108,15 +137,6 @@ const Hero = () => {
               ))}
 
             </div>
-          </div>
-
-          {/* Hero image — mobile/tablet only */}
-          <div className="lg:hidden w-full h-[280px] sm:h-[420px] rounded-2xl overflow-hidden shadow-sm">
-            <img
-              src="/hero.png"
-              alt="Gammes Unik Capillaire et Dermatologique"
-              className="w-full h-full object-cover object-center"
-            />
           </div>
 
         </motion.div>
