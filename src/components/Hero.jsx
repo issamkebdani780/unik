@@ -53,7 +53,7 @@ const Hero = () => {
               <source src="/hero-video.mp4" type="video/mp4" />
               <img
                 src="/hero.png"
-                
+
                 alt="Gammes Unik Capillaire et Dermatologique"
                 className="w-full h-full object-cover object-center"
               />
@@ -61,7 +61,7 @@ const Hero = () => {
           </div>
 
            {/* Left Text Content */}
-          <div className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 pr-0 lg:pr-8 pt-9">
+          <div className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 pr-0 lg:pr-8 pt-9 pb-9">
             <div className="space-y-1 w-full">
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-black tracking-tight leading-none uppercase">
                 L'EXPERTISE
