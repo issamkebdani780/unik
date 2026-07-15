@@ -53,6 +53,7 @@ const Hero = () => {
               <source src="/hero-video.mp4" type="video/mp4" />
               <img
                 src="/hero.png"
+                
                 alt="Gammes Unik Capillaire et Dermatologique"
                 className="w-full h-full object-cover object-center"
               />
