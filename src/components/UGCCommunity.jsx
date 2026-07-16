@@ -4,48 +4,55 @@ const UGCCommunity = () => {
   const scrollContainerRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
 
+  // Local fallback images state tracker
+  const [imageErrors, setImageErrors] = useState({});
+
+  const handleImageError = (id) => {
+    setImageErrors((prev) => ({ ...prev, [id]: true }));
+  };
+
   const videos = [
     {
       id: 1,
-      image: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?auto=format&fit=crop&w=400&q=80",
+      image: "/RiseGroup-18.png", // Local asset
       handle: "@skincare_by_chloe",
       views: "12.4k",
       caption: "Mon indispensable pour une peau lumineuse ✨ #Unik",
     },
     {
       id: 2,
-      image: "https://images.unsplash.com/photo-1596755389378-c11dde12415e?auto=format&fit=crop&w=400&q=80",
+      image: "/dermato_gel.png", // Local asset
       handle: "@glowwithmia",
       views: "8.2k",
       caption: "Routine du soir avec les essentiels anti-acné 💧",
     },
     {
       id: 3,
-      image: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=400&q=80",
+      image: "/capillaire_serum.png", // Local asset
       handle: "@hairgoals_fr",
       views: "45.1k",
       caption: "Croissance capillaire : mes résultats après 3 mois ! 🌱",
     },
     {
       id: 4,
-      image: "https://images.unsplash.com/photo-1580870058864-1596541f5a54?auto=format&fit=crop&w=400&q=80",
+      image: "/catg1.png", // Local asset
       handle: "@natural.lena",
       views: "22.8k",
       caption: "Texture incroyable ! 🤍 On adore #Selfcare",
     },
     {
       id: 5,
-      image: "https://images.unsplash.com/photo-1512496015851-a1dc8a477858?auto=format&fit=crop&w=400&q=80",
+      image: "/about_lab.png", // Local asset
       handle: "@dr.beaute",
       views: "105k",
       caption: "Avis d'expert sur la gamme Dermatologique UNIK 🔬",
     },
     {
       id: 6,
-      image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80",
+      image: "/catg2.png", // Local asset
       handle: "@justine_curls",
       views: "9.3k",
-      caption: "Définir ses boucles facilement 👩🏽‍🦱✨",
+      caption: "Définir ses boucles facilement 👩🏽‍Glisse",
     }
   ];
 
@@ -115,55 +122,68 @@ const UGCCommunity = () => {
           ref={scrollContainerRef}
           className="flex overflow-x-auto py-8 px-4 sm:px-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         >
-          {duplicatedVideos.map((video, index) => (
-            <a
-              key={index}
-              href="#"
-              className="relative w-64 h-96 sm:w-72 sm:h-[450px] mx-3 sm:mx-4 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex-shrink-0 cursor-pointer group/card block"
-              aria-label={`Voir la vidéo de ${video.handle}`}
-            >
-              {/* Image Thumbnail */}
-              <img
-                src={video.image}
-                alt={`Video by ${video.handle}`}
-                className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700 pointer-events-none"
-              />
-              
-              {/* Overlay Gradient for readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
-
-              {/* Play Button Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <div className="w-14 h-14 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
-                  <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-              </div>
-
-              {/* Video Info (Handle, Views, Caption) */}
-              <div className="absolute bottom-0 left-0 w-full p-5 text-left pointer-events-none">
-                <div className="flex items-center space-x-2 mb-2">
-                  <div className="w-8 h-8 rounded-full border-2 border-white overflow-hidden">
-                    <img src={video.image} alt="Avatar" className="w-full h-full object-cover" />
+          {duplicatedVideos.map((video, index) => {
+            const hasError = imageErrors[video.id];
+            return (
+              <a
+                key={index}
+                href="#"
+                className="relative w-64 h-96 sm:w-72 sm:h-[450px] mx-3 sm:mx-4 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex-shrink-0 cursor-pointer group/card block bg-gray-100"
+                aria-label={`Voir la vidéo de ${video.handle}`}
+              >
+                {/* Image Thumbnail with local files & error handler */}
+                {!hasError ? (
+                  <img
+                    src={video.image}
+                    alt={`Video by ${video.handle}`}
+                    onError={() => handleImageError(video.id)}
+                    className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700 pointer-events-none"
+                  />
+                ) : (
+                  /* Soft generic gradient placeholder if local path fails */
+                  <div className="w-full h-full bg-gradient-to-br from-[#f1f5fa] to-[#eaf1fa] flex items-center justify-center text-xs font-semibold text-gray-400">
+                    {video.handle}
                   </div>
-                  <div>
-                    <p className="text-white font-bold text-xs tracking-wide shadow-sm">{video.handle}</p>
-                    <p className="text-white/80 font-medium text-[10px] flex items-center">
-                      <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      {video.views} vues
-                    </p>
+                )}
+                
+                {/* Overlay Gradient for readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
+
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <div className="w-14 h-14 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
+                    <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
                   </div>
                 </div>
-                <p className="text-white text-xs font-medium line-clamp-2 shadow-sm opacity-90">
-                  {video.caption}
-                </p>
-              </div>
-            </a>
-          ))}
+
+                {/* Video Info (Handle, Views, Caption) */}
+                <div className="absolute bottom-0 left-0 w-full p-5 text-left pointer-events-none">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-gray-200">
+                      {!hasError && (
+                        <img src={video.image} alt="Avatar" className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-white font-bold text-xs tracking-wide shadow-sm">{video.handle}</p>
+                      <p className="text-white/80 font-medium text-[10px] flex items-center">
+                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        {video.views} vues
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-white text-xs font-medium line-clamp-2 shadow-sm opacity-90">
+                    {video.caption}
+                  </p>
+                </div>
+              </a>
+            );
+          })}
         </div>
 
         {/* Navigation Controls */}
