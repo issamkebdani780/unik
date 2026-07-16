@@ -105,7 +105,7 @@ const ProductShowcase = () => {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black uppercase tracking-tight leading-tight mb-6">
             La Science au Service de Votre Peau
           </h2>
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8 max-w-md font-medium">
+          <p className="hidden md:block text-gray-600 text-sm sm:text-base leading-relaxed mb-8 max-w-md font-medium">
             Formulés en laboratoire par nos experts, nos soins dermatologiques intègrent des actifs de pointe
             pour purifier, hydrater en profondeur et réparer la barrière cutanée. Une efficacité prouvée pour
             les peaux les plus exigeantes.
@@ -149,7 +149,7 @@ const ProductShowcase = () => {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black uppercase tracking-tight leading-tight mb-6">
             La Nature pour vos Cheveux
           </h2>
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8 max-w-md font-medium">
+          <p className="hidden md:block text-gray-600 text-sm sm:text-base leading-relaxed mb-8 max-w-md font-medium">
             Des formulations riches en extraits botaniques et vitamines pour cibler
             les problèmes capillaires à la racine. Fortifiez, nourrissez et ravivez
             la brillance naturelle de vos cheveux avec nos soins ciblés.

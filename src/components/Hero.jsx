@@ -3,143 +3,53 @@ import { motion } from 'framer-motion';
 import FloatingBackground from './FloatingBackground';
 
 const Hero = () => {
-
   return (
-    <section className="w-full bg-[#fcfcfc] overflow-hidden relative">
+    <section className="w-full bg-[#fcfcfc] relative overflow-hidden">
       <FloatingBackground gamme="all" />
       
-      {/* Background image — desktop only */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="hidden lg:block absolute top-0 right-0 w-[100vw] h-full z-0 pointer-events-none"
-      >
+      <div className="max-w-[96%] mx-auto relative rounded-3xl md:rounded-[3rem] overflow-hidden shadow-xl h-[55vh] sm:h-[70vh] md:h-[100vh] min-h-[420px] md:min-h-[500px] z-10">
+        
+        {/* Background Video - Desktop */}
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-cover object-left"
+          className="hidden md:block absolute inset-0 w-full h-full object-cover"
         >
           <source src="/hero-video.mp4" type="video/mp4" />
-          <img
-            src="/hero.png"
-            alt="Gammes Unik Capillaire et Dermatologique"
-            className="w-full h-full object-cover object-left"
-          />
         </video>
-      </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
+        {/* Background Video - Mobile */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="block md:hidden absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/videoMobile.mp4" type="video/mp4" />
+        </video>
+
+        {/* Gradient Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/10 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
+
+        {/* Text and Button Overlay (Bottom Left on Mobile, Bottom Right on Desktop) */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-12 items-center pt-36 pb-0 sm:pt-40  lg:pt-64 lg:pb-30 lg:min-h-[650px]"
+          className="absolute bottom-0 left-0 md:left-auto md:right-0 p-6 sm:p-12 md:p-16 flex flex-col items-start md:items-end text-left md:text-right z-20 space-y-4 md:space-y-5 w-full md:w-auto pr-16 md:pr-16"
         >
-
-         
-
-          {/* Hero video — mobile/tablet only */}
-          <div className="lg:hidden w-full max-w-sm mx-auto aspect-[9/16] rounded-2xl overflow-hidden shadow-sm">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover object-center"
-            >
-              <source src="/hero-video.mp4" type="video/mp4" />
-              <img
-                src="/hero.png"
-
-                alt="Gammes Unik Capillaire et Dermatologique"
-                className="w-full h-full object-cover object-center"
-              />
-            </video>
-          </div>
-
-           {/* Left Text Content */}
-          <div className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 pr-0 lg:pr-8 pt-9 pb-9">
-            <div className="space-y-1 w-full">
-              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-black tracking-tight leading-none uppercase">
-                L'EXPERTISE
-              </h1>
-              <h2 className="text-xl sm:text-2xl lg:text-[40px] font-extrabold tracking-tight leading-tight uppercase">
-                <span className="text-[#2b6fc2]">DERMATOLOGIQUE</span>{' '}
-                <span className="text-black">&amp;</span>{' '}
-                <span className="text-[#418854]">CAPILLAIRE</span>
-              </h2>
-            </div>
-
-            <div className="space-y-3 w-full">
-              <p className="text-sm sm:text-base font-bold text-black tracking-wide leading-snug">
-                POUR PRENDRE SOIN DE VOUS, COMME VOUS ÊTES.
-              </p>
-              <p className="text-gray-500 text-sm font-medium max-w-md leading-relaxed mx-auto lg:mx-0">
-                Des soins ciblés, développés avec exigence pour révéler votre beauté naturelle.
-              </p>
-            </div>
-
-            <a
-              href="#"
-              className="inline-block bg-black text-white px-8 py-4 text-xs font-bold tracking-widest hover:bg-brand-hover transition-colors uppercase duration-300 rounded-none shadow-sm"
-            >
-              DÉCOUVRIR NOS GAMMES
-            </a>
-
-            {/* Feature Icons */}
-            <div className="grid grid-cols-4 pt-8 w-full max-w-sm sm:max-w-md divide-x divide-gray-200 mx-auto lg:mx-0">
-
-              {[
-                {
-                  icon: (
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 8v8" /><path d="M8 12h8" />
-                    </svg>
-                  ),
-                  label: 'Formules testées dermatologiquement',
-                },
-                {
-                  icon: (
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M12 2A10 10 0 0 0 2 12c0 4.4 3.6 8 8 8h2a10 10 0 0 0 10-10V2H12z" />
-                      <path d="M12 22V12" /><path d="M12 12c4 0 8-4 8-8" />
-                    </svg>
-                  ),
-                  label: 'Ingrédients rigoureusement sélectionnés',
-                },
-                {
-                  icon: (
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                      <path d="m9 12 2 2 4-4" />
-                    </svg>
-                  ),
-                  label: 'Efficacité prouvée',
-                },
-                {
-                  icon: (
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M18 21a6 6 0 0 0-12 0" />
-                      <circle cx="12" cy="10" r="4" />
-                      <path d="M12 2v2" />
-                    </svg>
-                  ),
-                  label: 'Convient à tous types de peau et de cheveux',
-                },
-              ].map(({ icon, label }, i) => (
-                <div key={i} className="flex flex-col items-center text-center px-1 sm:px-2 space-y-2 sm:space-y-3">
-                  <div className="text-gray-900">{icon}</div>
-                  <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium leading-tight">{label}</span>
-                </div>
-              ))}
-
-            </div>
-          </div>
-
+          <h2 className="text-white text-[28px] leading-[1.15] sm:text-3xl md:text-[2.5rem] font-medium tracking-tight poppins-regular">
+            Core summer essentials are back.
+          </h2>
+          <a
+            href="#"
+            className="inline-block border border-white text-white px-5 py-2.5 md:px-8 md:py-3 text-[11px] md:text-sm font-semibold tracking-widest hover:bg-white hover:text-black transition-all uppercase rounded-full backdrop-blur-sm poppins-medium"
+          >
+            SHOP THE RESTOCK
+          </a>
         </motion.div>
       </div>
     </section>

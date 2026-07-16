@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 
 const Header = () => {
@@ -10,8 +10,12 @@ const Header = () => {
   const isHome = pathname === '/';
   const { theme } = useTheme();
 
-  // Scroll animations
   const { scrollY } = useScroll();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsScrolled(latest > 50);
+  });
 
   // Logo animation: Starts large just below the navbar, scales down and moves up to navbar
   const logoY = useTransform(scrollY, [0, 200], [isHome ? 80 : 0, 0]);
@@ -105,9 +109,9 @@ const Header = () => {
                   className="focus:outline-none block"
                 >
                   <img
-                    src={theme === 'capillaire' ? '/logovert.png' : theme === 'dermatologique' ? '/logoblue.png' : '/RiseGroup-18.png'}
+                    src={isHome && !isScrolled ? '/logowhite.png' : (theme === 'capillaire' ? '/logovert.png' : theme === 'dermatologique' ? '/logoblue.png' : '/RiseGroup-18.png')}
                     alt="Unik - Comme toi"
-                    className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto object-contain select-none"
+                    className="h-18 sm:h-20 md:h-24 lg:h-28 w-auto object-contain select-none"
                   />
                 </Link>
               </motion.div>
@@ -153,7 +157,7 @@ const Header = () => {
               className="fixed inset-0 bg-black/50 z-[60] md:hidden backdrop-blur-sm"
               onClick={() => setMenuOpen(false)}
             />
-            
+
             {/* Sidebar */}
             <motion.div
               initial={{ x: '-100%' }}
