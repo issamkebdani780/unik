@@ -36,7 +36,7 @@ const Home = () => {
       <Science />
       <UGCCommunity />
       <BrandStory />
-      <Testimonials />
+      {/* <Testimonials /> */}
       <Newsletter />
     </>
   );

@@ -99,15 +99,15 @@ const Testimonials = () => {
   );
 
   return (
-    <section className="w-full bg-[#fcfcfc] py-20 sm:py-32 overflow-hidden border-t border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+    <section className="w-full bg-[#fcfcfc] overflow-hidden border-t border-gray-100">
+      {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
         <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase block mb-4">
           ILS L'ONT ADOPTÉ
         </span>
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black uppercase tracking-tight leading-tight">
           Avis de notre <span className="text-brand-accent">Communauté</span>
         </h2>
-      </div>
+      </div> */}
 
       <div 
         className="relative w-full group"

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Testimonials from './Testimonials';
 
 const BrandStory = () => {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ const BrandStory = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Mission Statement */}
-        <div className="max-w-4xl mx-auto text-center mb-20 sm:mb-28">
+        <div className="max-w-4xl mx-auto text-center ">
           <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase block mb-6">
             NOTRE IDENTITÉ
           </span>
@@ -17,13 +18,14 @@ const BrandStory = () => {
             La beauté n'est pas un standard, <br className="hidden sm:block" />
             c'est une science adaptée à vous.
           </h2>
-          <p className="text-gray-500 font-medium text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+          {/* <p className="text-gray-500 font-medium text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
             Chez UNIK, nous pensons que chaque peau et chaque cheveu possède sa propre singularité. 
             Notre mission est de vous offrir des formules de pointe, développées en laboratoire, 
             qui allient efficacité clinique et respect absolu de votre nature.
-          </p>
+          </p> */}
         </div>
 
+        <Testimonials />
         {/* 3 Pillars Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 divide-y md:divide-y-0 md:divide-x divide-gray-100">
           
