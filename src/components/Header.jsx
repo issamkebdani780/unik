@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import CartDrawer from './CartDrawer'; // Import our new Cart Drawer
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false); // State to control Drawer
   const location = useLocation();
   const pathname = location.pathname;
   const isHome = pathname === '/';
@@ -17,12 +19,35 @@ const Header = () => {
     setIsScrolled(latest > 50);
   });
 
-  // Logo animation: Starts large just below the navbar, scales down and moves up to navbar
+  // MOCK STATE: You can replace this with your dynamic state context hook later!
+  const [cartItems, setCartItems] = useState([
+    {
+      id: 'cap-shampoo',
+      name: 'SHAMPOOING RÉPARATEUR INTENSE',
+      price: 1800,
+      image: '/catg2.png',
+      size: '250ml',
+      quantity: 1
+    }
+  ]);
+
+  const handleUpdateQuantity = (id, newQty) => {
+    if (newQty <= 0) {
+      handleRemoveItem(id);
+    } else {
+      setCartItems(prev => prev.map(item => item.id === id ? { ...item, quantity: newQty } : item));
+    }
+  };
+
+  const handleRemoveItem = (id) => {
+    setCartItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  // Logo animation
   const logoY = useTransform(scrollY, [0, 200], [isHome ? 80 : 0, 0]);
   const logoScale = useTransform(scrollY, [0, 200], [isHome ? 1.8 : 1, 1]);
-
-  // Header background color with opacity transition
-  const headerBgOpacity = useTransform(scrollY, [0, 150], [isHome ? 0 : 1, 1]);
 
   // Header background color
   const headerBgColor = "rgba(255, 255, 255, 1)";
@@ -131,19 +156,40 @@ const Header = () => {
                   <circle cx="12" cy="7" r="4" />
                 </svg>
               </button>
-              <button className="text-black hover:text-brand-accent transition-colors p-1.5 relative" aria-label="Panier">
+              
+              {/* Trigger Button: Toggles the Drawer */}
+              <button 
+                onClick={() => setCartOpen(true)} 
+                className="text-black hover:text-brand-accent transition-colors p-1.5 relative" 
+                aria-label="Panier"
+              >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                   <line x1="3" x2="21" y1="6" y2="6" />
                   <path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
-                <span className="absolute top-0 right-0 bg-black text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center transform translate-x-1.5 -translate-y-1">0</span>
+                <span className="absolute top-0 right-0 bg-black text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center transform translate-x-1.5 -translate-y-1">
+                  {totalCartCount}
+                </span>
               </button>
             </motion.div>
 
           </div>
         </div>
       </motion.header>
+
+      {/* Cart Drawer Overlay */}
+      <AnimatePresence>
+        {cartOpen && (
+          <CartDrawer 
+            isOpen={cartOpen} 
+            onClose={() => setCartOpen(false)} 
+            cartItems={cartItems}
+            onRemove={handleRemoveItem}
+            onUpdateQuantity={handleUpdateQuantity}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Mobile Dropdown Menu (Sidebar) */}
       <AnimatePresence>
