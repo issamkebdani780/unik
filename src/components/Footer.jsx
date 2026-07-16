@@ -82,9 +82,7 @@ const Footer = () => {
             <ul className="space-y-2.5">
               {[
                 { label: 'A propos', to: '/about' },
-                { label: 'Nos engagements', to: '/engagements' },
-                { label: 'Ingrédients', to: '/catalog' },
-                { label: 'FAQ', to: '/' }
+                { label: 'FAQ', to: '/faq' }
               ].map((item) => (
                 <li key={item.label}>
                   <Link to={item.to} className="text-xs sm:text-sm text-gray-500 hover:text-brand-accent transition-colors font-medium">
