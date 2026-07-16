@@ -42,13 +42,13 @@ const Hero = () => {
           className="absolute bottom-0 left-0 md:left-auto md:right-0 p-6 sm:p-12 md:p-16 flex flex-col items-start md:items-end text-left md:text-right z-20 space-y-4 md:space-y-5 w-full md:w-auto pr-16 md:pr-16"
         >
           <h2 className="text-white text-[28px] leading-[1.15] sm:text-3xl md:text-[2.5rem] font-medium tracking-tight poppins-regular">
-            Core summer essentials are back.
+            Clair, efficace et instantané.
           </h2>
           <a
             href="#"
             className="inline-block border border-white text-white px-5 py-2.5 md:px-8 md:py-3 text-[11px] md:text-sm font-semibold tracking-widest hover:bg-white hover:text-black transition-all uppercase rounded-full backdrop-blur-sm poppins-medium"
           >
-            SHOP THE RESTOCK
+            VOIR LA COLLECTION
           </a>
         </motion.div>
       </div>

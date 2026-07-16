@@ -6,25 +6,28 @@
   --font-body: "Poppins", sans-serif;
 }
 
+/* Default / Capillaire Root Colors */
 :root {
-  --theme-accent: #76cb5a;
-  --theme-hover: #60a849;
-  --theme-light: #f0f4ea;
-  --theme-slogan: #76cb5a;
+  --theme-accent: #3a703e;      /* Deep botanical green */
+  --theme-hover: #59a946;       /* Bright mid green for hover */
+  --theme-light: #a2b993;       /* Soft muted sage green */
+  --theme-slogan: #8cba1a;      /* Fresh lime green for punchy slogans */
 }
 
+/* Explicit Capillaire Theme Colors */
 :root[data-theme="capillaire"] {
-  --theme-accent: #76cb5a;
-  --theme-hover: #60a849;
-  --theme-light: #f0f4ea;
-  --theme-slogan: #76cb5a;
+  --theme-accent: #3a703e;      /* Deep botanical green */
+  --theme-hover: #59a946;       /* Bright mid green */
+  --theme-light: #a2b993;       /* Soft sage green */
+  --theme-slogan: #83c86d;      /* Light vibrant herbal green */
 }
 
+/* Explicit Dermatologique Theme Colors */
 :root[data-theme="dermatologique"] {
-  --theme-accent: #296fc2;
-  --theme-hover: #1e5291;
-  --theme-light: #ecf2f8;
-  --theme-slogan: #296fc2;
+  --theme-accent: #0262b8;      /* Deep clinical blue */
+  --theme-hover: #2979ff;       /* Electric blue for hover states */
+  --theme-light: #b2d2ec;       /* Soft, icy pastel blue */
+  --theme-slogan: #4d8dff;      /* Bright, crisp highlight blue */
 }
 
 @utility text-brand-accent {
