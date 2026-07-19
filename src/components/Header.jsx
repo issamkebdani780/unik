@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
@@ -44,6 +44,29 @@ const Header = () => {
   };
 
   const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  useEffect(() => {
+    const handleAddToCart = (e) => {
+      const product = e.detail;
+      setCartItems(prev => {
+        const existing = prev.find(item => item.id === product.id || item.id === `product-${product.id}`);
+        if (existing) {
+          return prev.map(item => (item.id === product.id || item.id === `product-${product.id}`) ? { ...item, quantity: item.quantity + 1 } : item);
+        }
+        return [...prev, {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          size: product.sizes?.[0] || '1 pc',
+          quantity: 1
+        }];
+      });
+      setCartOpen(true);
+    };
+    window.addEventListener('add-to-cart', handleAddToCart);
+    return () => window.removeEventListener('add-to-cart', handleAddToCart);
+  }, []);
 
   // Logo animation
   const logoY = useTransform(scrollY, [0, 200], [isHome ? 80 : 0, 0]);
@@ -134,7 +157,7 @@ const Header = () => {
                   className="focus:outline-none block"
                 >
                   <img
-                    src={isHome && !isScrolled ? '/logowhite.png' : (theme === 'capillaire' ? '/logovert.png' : theme === 'dermatologique' ? '/logoblue.png' : '/RiseGroup-18.png')}
+                    src={isHome && !isScrolled ? '/logowhite.png' : '/RiseGroup-18.png'}
                     alt="Unik - Comme toi"
                     className="h-18 sm:h-20 md:h-24 lg:h-28 w-auto object-contain select-none"
                   />
@@ -210,10 +233,10 @@ const Header = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm bg-white z-[70] md:hidden flex flex-col shadow-2xl"
+              className="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm bg-white z-[70] md:hidden flex flex-col shadow-2xl rounded-r-[32px] overflow-hidden"
             >
               <div className="p-6 flex justify-between items-center border-b border-gray-100">
-                <img src={theme === 'capillaire' ? '/logovert.png' : theme === 'dermatologique' ? '/logoblue.png' : '/RiseGroup-18.png'} alt="Unik" className="h-8 object-contain" />
+                <img src="/RiseGroup-18.png" alt="Unik" className="h-8 object-contain" />
                 <button onClick={() => setMenuOpen(false)} className="p-2 -mr-2 text-gray-500 hover:text-black focus:outline-none">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />

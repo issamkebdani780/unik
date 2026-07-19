@@ -97,19 +97,6 @@ const ShowcaseCard = ({ product, isMobile }) => {
           />
         )}
 
-        {/* Quick Add floating glassmorphic CTA */}
-        <div className="absolute inset-x-0 bottom-4 px-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out z-10 hidden sm:block">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/product/${product.id}`);
-            }}
-            className={`w-full bg-white/90 backdrop-blur-md text-gray-900 ${accentHoverBg} hover:text-white text-[11px] font-bold tracking-wider uppercase py-3 px-4 rounded-xl text-center shadow-md transition-all duration-300`}
-          >
-            Découvrir — {product.price.toLocaleString('fr-FR')} DA
-          </button>
-        </div>
-
         {/* Minimal Best Seller Badge */}
         <div className="absolute top-4 left-4 z-10">
           <span className="text-[9px] tracking-wider font-bold uppercase px-3 py-1.5 rounded-full shadow-xs bg-white/90 backdrop-blur-md text-gray-800 border border-white/40">
@@ -119,61 +106,48 @@ const ShowcaseCard = ({ product, isMobile }) => {
       </div>
 
       {/* Card Content */}
-      <div className="p-5 flex flex-col flex-1 bg-white gap-3.5">
+      <div className="p-5 flex flex-col flex-1 bg-white relative min-h-[145px] sm:min-h-[165px] overflow-hidden">
         
-        {/* Category & Rating Row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <StarRating rating={product.rating} accentColor={accentColor} />
-            <span className="text-[10px] text-gray-400 font-semibold">
-              ({product.reviewsCount})
-            </span>
-          </div>
-          {product.sizes?.length > 0 && (
-            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider bg-gray-50 px-2 py-0.5 rounded">
-              {product.sizes[0]}
-            </span>
-          )}
-        </div>
-
-        {/* Product Title */}
-        <h3 className="text-sm sm:text-base font-bold text-gray-800 tracking-tight group-hover:text-gray-950 transition-colors line-clamp-1 leading-snug">
+        {/* Always visible title */}
+        <h3 className="text-sm sm:text-base font-bold text-gray-800 tracking-tight group-hover:text-gray-950 transition-colors line-clamp-2 leading-snug mb-5">
           {product.name}
         </h3>
 
-        {/* Modern Ingredient Badges */}
-        <div className="flex flex-wrap gap-1.5 min-h-[22px]">
-          {product.activeIngredients?.slice(0, 2).map((ingredient) => (
-            <span
-              key={ingredient}
-              className={`text-[8px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border ${accentBg} ${accentBorder} ${accentColor}`}
-            >
-              {ingredient}
-            </span>
-          ))}
-        </div>
+        {/* Normal state info (fades out on desktop hover) */}
+        <div className="flex justify-between mt-2 transition-all duration-300 sm:opacity-100 sm:translate-y-0 sm:group-hover:opacity-0 sm:group-hover:translate-y-2 sm:group-hover:pointer-events-none">
+          {/* Category & Rating Row */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <StarRating rating={product.rating} accentColor={accentColor} />
+              <span className="text-[10px] text-gray-400 font-semibold">
+                ({product.reviewsCount})
+              </span>
+            </div>
+          </div>
 
-        {/* Pricing & Mobile Quick Action */}
-        <div className="flex items-center justify-between mt-auto pt-3.5 border-t border-gray-100/80">
-          <div className="flex flex-col">
-            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider leading-none mb-0.5">Prix</span>
+          {/* Price */}
+          <div className="flex items-baseline gap-1">
+            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Prix:</span>
             <span className="text-base font-extrabold text-gray-900">
               {product.price.toLocaleString('fr-FR')} <span className="text-xs font-bold">DA</span>
             </span>
           </div>
+        </div>
 
-          {/* Quick Shop Button visible only on Mobile/Tablet */}
+        {/* Add to Cart Button (absolute positioned on desktop hover, normal on mobile) */}
+        <div className="w-full sm:absolute sm:left-5 sm:right-5 sm:bottom-5 sm:w-auto sm:opacity-0 sm:translate-y-2 sm:pointer-events-none sm:transition-all sm:duration-300 sm:group-hover:opacity-100 sm:group-hover:sm:translate-y-0 sm:group-hover:sm:pointer-events-auto">
           <button
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/product/${product.id}`);
+              const event = new CustomEvent('add-to-cart', { detail: product });
+              window.dispatchEvent(event);
             }}
-            className="sm:hidden flex items-center justify-center w-9 h-9 rounded-full bg-gray-900 text-white active:scale-95 transition-transform"
-            aria-label="Acheter"
+            className="w-full bg-gray-950 hover:bg-black text-white text-[11px] font-bold tracking-wider uppercase py-3.5 px-4 rounded-xl text-center shadow-sm transition-all duration-300 flex items-center justify-center gap-2 active:scale-98"
           >
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
+            Ajouter — {product.price.toLocaleString('fr-FR')} DA
           </button>
         </div>
       </div>
@@ -223,7 +197,7 @@ const ProductShowcase = () => {
 
         {/* Products Grid */}
         <div className="pl-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center overflow-hidden">
-          <div className="flex overflow-x-auto sm:grid sm:grid-cols-2 gap-5 sm:gap-6 w-full max-w-xl snap-x snap-mandatory pr-6 sm:pr-0 pb-6 sm:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex overflow-x-auto sm:grid sm:grid-cols-2 gap-5 sm:gap-6 w-full max-w-3xl snap-x snap-mandatory pr-6 sm:pr-0 pb-6 sm:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {dermaProducts.map(product => (
               <ShowcaseCard key={product.id} product={product} isMobile={isMobile} />
             ))}
@@ -235,7 +209,7 @@ const ProductShowcase = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 bg-gradient-to-br from-[#f5f8f3]/70 to-white">
         {/* Products Grid */}
         <div className="order-2 lg:order-1 pl-6 sm:px-12 lg:px-20 py-12 sm:py-16 flex items-center justify-center overflow-hidden">
-          <div className="flex overflow-x-auto sm:grid sm:grid-cols-2 gap-5 sm:gap-6 w-full max-w-xl snap-x snap-mandatory pr-6 sm:pr-0 pb-6 sm:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex overflow-x-auto sm:grid sm:grid-cols-2 gap-5 sm:gap-6 w-full max-w-3xl snap-x snap-mandatory pr-6 sm:pr-0 pb-6 sm:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {capillaireProducts.map(product => (
               <ShowcaseCard key={product.id} product={product} isMobile={isMobile} />
             ))}

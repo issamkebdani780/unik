@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import FloatingBackground from './FloatingBackground';
 
@@ -44,12 +45,12 @@ const Hero = () => {
           <h2 className="text-white text-[28px] leading-[1.15] sm:text-3xl md:text-[2.5rem] font-medium tracking-tight poppins-regular">
             Clair, efficace et instantané.
           </h2>
-          <a
-            href="#"
+          <Link
+            to="/catalog"
             className="inline-block border border-white text-white px-5 py-2.5 md:px-8 md:py-3 text-[11px] md:text-sm font-semibold tracking-widest hover:bg-white hover:text-black transition-all uppercase rounded-full backdrop-blur-sm poppins-medium"
           >
             VOIR LA COLLECTION
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

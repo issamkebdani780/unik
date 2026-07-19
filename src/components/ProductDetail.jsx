@@ -13,12 +13,38 @@ const ProductDetail = () => {
   const [isAdded, setIsAdded] = useState(false);
   const [flyingImage, setFlyingImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [newReview, setNewReview] = useState({ name: '', rating: 5, comment: '' });
-  const [reviewsList, setReviewsList] = useState([]);
+  const defaultReviews = [
+    {
+      name: "Sarah M.",
+      date: "12/07/2026",
+      rating: 5,
+      title: "Une vraie révélation !",
+      comment: "Depuis que j'utilise ce soin, ma peau est complètement transformée. Plus de rougeurs ni d'inconfort. Je recommande à 100% !"
+    },
+    {
+      name: "Lina K.",
+      date: "05/07/2026",
+      rating: 5,
+      title: "Texture incroyable",
+      comment: "J'adore la texture ultra-légère. Elle pénètre instantanément sans laisser de fini gras. Parfait au quotidien."
+    },
+    {
+      name: "Yasmine L.",
+      date: "28/06/2026",
+      rating: 4,
+      title: "Efficace rapidement",
+      comment: "Des résultats visibles dès les trois premières semaines d'utilisation. Le packaging est également très qualitatif."
+    }
+  ];
+
+  const [newReview, setNewReview] = useState({ name: '', rating: 5, comment: '', title: '' });
+  const [reviewsList, setReviewsList] = useState(defaultReviews);
   const scrollContainerRef = React.useRef(null);
   const [isPaused, setIsPaused] = useState(false);
   const routineScrollContainerRef = React.useRef(null);
   const [isRoutinePaused, setIsRoutinePaused] = useState(false);
+  const reviewMarqueeRef = React.useRef(null);
+  const [isReviewMarqueePaused, setIsReviewMarqueePaused] = useState(false);
 
   // Find personalized routine products (and append other catalog products to make it scrollable like UGCCommunity)
   const routineProducts = (() => {
@@ -74,6 +100,28 @@ const ProductDetail = () => {
     return () => cancelAnimationFrame(animationFrameId);
   }, [isRoutinePaused, routineProducts.length]);
 
+  // Auto-scroll for reviews section (matching Testimonials logic)
+  useEffect(() => {
+    let animationFrameId;
+    const container = reviewMarqueeRef.current;
+    if (!container || reviewsList.length === 0) return;
+
+    const scroll = () => {
+      if (container && !isReviewMarqueePaused) {
+        container.scrollLeft += 0.8;
+        
+        if (container.scrollLeft >= container.scrollWidth / 2) {
+          container.scrollLeft -= container.scrollWidth / 2;
+        }
+      }
+      animationFrameId = requestAnimationFrame(scroll);
+    };
+
+    animationFrameId = requestAnimationFrame(scroll);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isReviewMarqueePaused, reviewsList]);
+
   // Scroll to top when product changes
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -83,16 +131,20 @@ const ProductDetail = () => {
       setSelectedSize(foundProduct.sizes[0] || '');
       setQuantity(1);
       setCurrentImageIndex(0);
-      setReviewsList([]);
-      setNewReview({ name: '', rating: 5, comment: '' });
+      setReviewsList(defaultReviews);
+      setNewReview({ name: '', rating: 5, comment: '', title: '' });
     }
   }, [productId]);
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
     if (!newReview.name || !newReview.comment) return;
-    setReviewsList([...reviewsList, { ...newReview, date: new Date().toLocaleDateString('fr-FR') }]);
-    setNewReview({ name: '', rating: 5, comment: '' });
+    setReviewsList([...reviewsList, { 
+      ...newReview, 
+      date: new Date().toLocaleDateString('fr-FR'),
+      title: newReview.title || 'Soin Exceptionnel'
+    }]);
+    setNewReview({ name: '', rating: 5, comment: '', title: '' });
   };
 
   if (!product) {
@@ -493,110 +545,175 @@ const ProductDetail = () => {
       )}
 
       {/* 4. REVIEWS SECTION */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 border-t border-gray-100 bg-white">
-        <div className="text-center mb-12 sm:mb-16">
-          <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase block mb-4">
-            VOTRE AVIS COMPTE
-          </span>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-black uppercase tracking-tight">
-            Avis Clients
-          </h2>
-        </div>
+      <div className="w-full bg-[#fcfcfc] py-16 sm:py-24 border-t border-gray-100 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <div className="text-center  mb-10">
+            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase block mb-4">
+              VOTRE AVIS COMPTE
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-black uppercase tracking-tight">
+              Avis Clients
+            </h2>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
-          {/* Right: Reviews List */}
-          <div className="flex flex-col space-y-8">
-            <h3 className="text-lg font-extrabold tracking-widest text-black uppercase mb-2">Avis Récents ({product.reviewsCount + reviewsList.length})</h3>
+          {/* Dynamic Reviews Marquee */}
+          <div 
+            className="relative w-full group mt-6"
+            onMouseEnter={() => setIsReviewMarqueePaused(true)}
+            onMouseLeave={() => setIsReviewMarqueePaused(false)}
+            onTouchStart={() => setIsReviewMarqueePaused(true)}
+            onTouchEnd={() => setIsReviewMarqueePaused(false)}
+          >
+            {/* Gradients for smooth fading on edges */}
+            <div className="absolute top-0 left-0 h-full w-12 sm:w-32 bg-gradient-to-r from-[#fcfcfc] to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 h-full w-12 sm:w-32 bg-gradient-to-l from-[#fcfcfc] to-transparent z-10 pointer-events-none"></div>
 
-            {reviewsList.length === 0 ? (
-              <div className="bg-gray-50/50 rounded-2xl p-8 border border-gray-100 flex flex-col items-center justify-center text-center h-full min-h-[250px]">
-                <span className="text-3xl mb-4">💬</span>
-                <p className="text-sm font-medium text-gray-500">Aucun avis récent pour le moment.<br />Soyez le premier à partager votre expérience !</p>
-              </div>
-            ) : (
-              <div className="space-y-6 max-h-[600px] overflow-y-auto pr-2">
-                {reviewsList.slice().reverse().map((review, idx) => (
-                  <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <p className="text-sm font-bold text-black uppercase tracking-wider">{review.name}</p>
-                        <p className="text-[10px] text-gray-400 font-medium mt-1">{review.date}</p>
-                      </div>
-                      <div className="flex text-amber-400">
-                        {[...Array(5)].map((_, i) => (
-                          <svg key={i} className={`w-3.5 h-3.5 ${i < review.rating ? 'fill-current' : 'text-gray-200 stroke-current'}`} viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                      </div>
+            <div 
+              ref={reviewMarqueeRef}
+              className="flex overflow-x-auto py-10 px-4 sm:px-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden items-center"
+            >
+              {[...reviewsList, ...reviewsList].map((review, index) => (
+                <div
+                  key={`${review.id || index}-${index}`}
+                  className="relative flex-shrink-0 w-[80vw] sm:w-[450px] mx-3 sm:mx-4 bg-white p-6 sm:p-8 rounded-2xl shadow-xs border border-gray-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex space-x-1">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <svg key={i} className="w-3.5 h-3.5 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                      ))}
+                      {[...Array(5 - review.rating)].map((_, i) => (
+                        <svg key={i} className="w-3.5 h-3.5 text-gray-200 fill-current" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                      ))}
                     </div>
-                    <p className="text-sm text-gray-600 font-medium leading-relaxed">"{review.comment}"</p>
+                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{review.date}</span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
 
-          {/* Left: Review Form */}
-          <div className="bg-gray-50 p-8 sm:p-10 rounded-2xl border border-gray-100">
-            <h3 className="text-lg font-extrabold tracking-widest text-black uppercase mb-6">Laissez un avis</h3>
-            <form onSubmit={handleReviewSubmit} className="space-y-6">
+                  <h3 className="text-base font-bold text-black mb-2">"{review.title || 'Excellent produit'}"</h3>
+                  <p className="text-gray-500 font-medium text-xs sm:text-sm leading-relaxed mb-6">
+                    {review.comment}
+                  </p>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Votre Note</label>
-                <div className="flex space-x-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      type="button"
-                      key={star}
-                      onClick={() => setNewReview({ ...newReview, rating: star })}
-                      className="cursor-pointer"
-                    >
-                      <svg className={`w-8 h-8 transition-colors ${newReview.rating >= star ? 'text-amber-400 fill-current' : 'text-gray-300 stroke-current'}`} viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    </button>
-                  ))}
+                  <div className="flex items-center space-x-3">
+                    <div className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-xs font-bold text-gray-600 uppercase border border-gray-100">
+                      {review.name.slice(0, 2)}
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-black">{review.name}</p>
+                      <p className="text-[10px] text-green-600 font-bold flex items-center mt-0.5">
+                        <svg className="w-2.5 h-2.5 mr-0.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Acheteur Vérifié
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
+            </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nom</label>
-                <input
-                  type="text"
-                  required
-                  value={newReview.name}
-                  onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
-                  className="w-full border border-gray-200 p-4 rounded-sm text-sm focus:outline-none focus:border-black transition-colors"
-                  placeholder="Votre nom"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Commentaire</label>
-                <textarea
-                  required
-                  rows="4"
-                  value={newReview.comment}
-                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
-                  className="w-full border border-gray-200 p-4 rounded-sm text-sm focus:outline-none focus:border-black transition-colors resize-none"
-                  placeholder="Partagez votre expérience..."
-                ></textarea>
-              </div>
-
-              <button
-                type="submit"
-                className={`w-full text-white text-xs font-extrabold tracking-widest uppercase py-4 rounded-sm shadow-sm transition-all duration-300 cursor-pointer ${themeBtnHover}`}
-                style={{ backgroundColor: themeColor }}
+            {/* Navigation Controls */}
+            <div className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-6 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button 
+                onClick={() => reviewMarqueeRef.current?.scrollBy({ left: -350, behavior: 'smooth' })}
+                className="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md text-black hover:bg-black hover:text-white transition-colors border border-gray-100 cursor-pointer"
+                aria-label="Avis précédent"
               >
-                Publier l'avis
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
               </button>
-            </form>
+            </div>
+            <div className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button 
+                onClick={() => reviewMarqueeRef.current?.scrollBy({ left: 350, behavior: 'smooth' })}
+                className="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md text-black hover:bg-black hover:text-white transition-colors border border-gray-100 cursor-pointer"
+                aria-label="Avis suivant"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
 
+          <div className="flex justify-center">
+            {/* Review Form */}
+            <div className="w-full max-w-2xl bg-white p-8 sm:p-10 rounded-2xl border border-gray-100/80 shadow-xs">
+              <h3 className="text-sm font-bold tracking-widest text-black uppercase mb-6">Laissez un avis</h3>
+              <form onSubmit={handleReviewSubmit} className="space-y-5">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Votre Note</label>
+                  <div className="flex space-x-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        type="button"
+                        key={star}
+                        onClick={() => setNewReview({ ...newReview, rating: star })}
+                        className="cursor-pointer transition-transform active:scale-90"
+                      >
+                        <svg className={`w-7 h-7 transition-colors ${newReview.rating >= star ? 'text-amber-400 fill-current' : 'text-gray-200 fill-current'}`} viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Nom / Pseudo</label>
+                    <input
+                      type="text"
+                      required
+                      value={newReview.name}
+                      onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                      className="w-full border border-gray-200 p-3.5 rounded-xl text-sm focus:outline-none focus:border-black transition-colors"
+                      placeholder="Ex: Sarah M."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Titre de l'avis</label>
+                    <input
+                      type="text"
+                      required
+                      value={newReview.title || ''}
+                      onChange={(e) => setNewReview({ ...newReview, title: e.target.value })}
+                      className="w-full border border-gray-200 p-3.5 rounded-xl text-sm focus:outline-none focus:border-black transition-colors"
+                      placeholder="Ex: Texture incroyable !"
+                    />
+                  </div>
+                </div>
 
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Commentaire</label>
+                  <textarea
+                    required
+                    rows="3"
+                    value={newReview.comment}
+                    onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                    className="w-full border border-gray-200 p-3.5 rounded-xl text-sm focus:outline-none focus:border-black transition-colors resize-none"
+                    placeholder="Qu'avez-vous pensé de l'efficacité, de la texture ou du parfum ?"
+                  ></textarea>
+                </div>
+
+                <button
+                  type="submit"
+                  className={`w-full text-white text-xs font-extrabold tracking-widest uppercase py-4 rounded-xl shadow-xs transition-all duration-300 cursor-pointer ${themeBtnHover}`}
+                  style={{ backgroundColor: themeColor }}
+                >
+                  Publier l'avis
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
+
+        
       </div>
 
       {/* 5. PERSONALIZED ROUTINE SECTION */}
