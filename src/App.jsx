@@ -13,6 +13,8 @@ import ProductCatalog from './components/ProductCatalog';
 import ProductDetail from './components/ProductDetail';
 import About from './components/About';
 import FAQ from './components/FAQ';
+import ContactPage from './components/ContactPage';
+import DeliveryExchangePage from './components/DeliveryExchangePage';
 import EmailPopup from './components/EmailPopup';
 import { ThemeProvider } from './context/ThemeContext';
 
@@ -56,6 +58,8 @@ function App() {
             <Route path="/product/:productId" element={<ProductDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/delivery-exchange" element={<DeliveryExchangePage />} />
           </Routes>
         </main>
 

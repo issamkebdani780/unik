@@ -28,6 +28,7 @@ const Footer = () => {
               {[
                 {
                   label: 'Instagram',
+                  href: 'https://www.instagram.com/unik_dz?igsh=a3hyaXJqMHg3a2xh',
                   svg: (
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -38,6 +39,7 @@ const Footer = () => {
                 },
                 {
                   label: 'TikTok',
+                  href: 'https://www.tiktok.com/@unikdz?_r=1&_t=ZS-98BgDTvNaOl',
                   svg: (
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
@@ -46,16 +48,19 @@ const Footer = () => {
                 },
                 {
                   label: 'Facebook',
+                  href: 'https://www.facebook.com/share/1EYEMLgkNi/',
                   svg: (
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
                     </svg>
                   ),
                 },
-              ].map(({ label, svg }) => (
+              ].map(({ label, href, svg }) => (
                 <a
                   key={label}
-                  href="#"
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
                   className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-700 hover:bg-black hover:text-white hover:border-black transition-colors"
                   aria-label={label}
                 >
@@ -99,8 +104,15 @@ const Footer = () => {
               SERVICE CLIENT
             </h4>
             <ul className="space-y-2.5">
-              {['Contact', 'Livraison & Retours', 'CGV', 'Politique de confidentialité'].map((item) => (
-                <li key={item}><a href="#" className="text-xs sm:text-sm text-gray-500 hover:text-brand-accent transition-colors font-medium">{item}</a></li>
+              {[
+                { label: 'Contact', to: '/contact' },
+                { label: 'Livraison & Échange', to: '/delivery-exchange' }
+              ].map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-xs sm:text-sm text-gray-500 hover:text-brand-accent transition-colors font-medium">
+                    {item.label}
+                  </Link>
+                </li>
               ))}
             </ul>
           </div>
