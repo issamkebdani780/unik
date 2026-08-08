@@ -19,17 +19,8 @@ const Header = () => {
     setIsScrolled(latest > 50);
   });
 
-  // MOCK STATE: You can replace this with your dynamic state context hook later!
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 'cap-shampoo',
-      name: 'SHAMPOOING RÉPARATEUR INTENSE',
-      price: 1800,
-      image: '/catg2.png',
-      size: '250ml',
-      quantity: 1
-    }
-  ]);
+  // Cart state
+  const [cartItems, setCartItems] = useState([]);
 
   const handleUpdateQuantity = (id, newQty) => {
     if (newQty <= 0) {

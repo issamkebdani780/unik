@@ -1,37 +1,31 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
 
 const ThemeContext = createContext();
 
+// Capillaire category IDs
+const CAPILLAIRE_IDS = ['3', '24'];
+const CAPILLAIRE_KEYWORDS = ['cheveux', 'capillaire', 'anti chute', 'chute'];
+
+export const isCapillaireCategory = (categoryId, categoryName = '') => {
+  if (CAPILLAIRE_IDS.includes(String(categoryId))) return true;
+  const lower = categoryName.toLowerCase();
+  return CAPILLAIRE_KEYWORDS.some(k => lower.includes(k)) && !lower.includes('visage');
+};
+
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('default');
-  const location = useLocation();
+  // Read persisted theme from localStorage so it survives page navigation
+  const [theme, setThemeState] = useState(
+    () => localStorage.getItem('unik-theme') || 'dermatologique'
+  );
 
-  useEffect(() => {
-    // When the user navigates or the URL changes, we check for a 'gamme' query parameter
-    // If it exists, we update the global theme.
-    const searchParams = new URLSearchParams(location.search);
-    const gamme = searchParams.get('gamme');
-    
-    if (gamme === 'capillaire') {
-      setTheme('capillaire');
-    } else if (gamme === 'dermatologique') {
-      setTheme('dermatologique');
-    } else if (gamme === 'all' || location.pathname === '/') {
-      if (gamme === 'all') {
-        setTheme('default');
-      }
-    }
-  }, [location.search, location.pathname]);
+  const setTheme = (newTheme) => {
+    setThemeState(newTheme);
+    localStorage.setItem('unik-theme', newTheme);
+  };
 
-  // Apply the data-theme attribute to the root HTML element
+  // Apply data-theme attribute to <html> whenever theme changes
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'default') {
-      root.removeAttribute('data-theme');
-    } else {
-      root.setAttribute('data-theme', theme);
-    }
+    document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
   return (

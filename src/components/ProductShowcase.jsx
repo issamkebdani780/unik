@@ -1,52 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { products } from '../data/products';
-
-const StarRating = ({ rating, accentColor }) => {
-  const stars = [1, 2, 3, 4, 5];
-  return (
-    <div className="flex items-center gap-[3px]">
-      {stars.map((star) => (
-        <svg
-          key={star}
-          width="12"
-          height="12"
-          viewBox="0 0 20 20"
-          className={star <= Math.round(rating) ? accentColor : 'text-gray-200'}
-          fill="currentColor"
-        >
-          <path d="M10 1l2.8 5.9 6.2.9-4.5 4.5 1.1 6.2L10 15.5 4.4 18.5l1.1-6.2L1 7.8l6.2-.9L10 1z" />
-        </svg>
-      ))}
-    </div>
-  );
-};
+import { fetchProducts, getImageUrl } from '../api/client';
+import { useTheme } from '../context/ThemeContext';
 
 const ShowcaseCard = ({ product, isMobile }) => {
   const navigate = useNavigate();
-  const isCapillaire = product.gamme === 'capillaire';
-  
-  // States to track if images fail to load
+  const isSoinsVisage = product.category?.name?.toLowerCase().includes('visage');
+  const isCapillaire = !isSoinsVisage && (product.category?.id === 3 || product.category?.id === 24 || product.category?.parentCategory === 3);
   const [baseImageError, setBaseImageError] = useState(false);
-  const [hoverImageError, setHoverImageError] = useState(false);
 
-  // Palette configurations
-  const accentColor = isCapillaire ? 'text-[#3a7547]' : 'text-[#296fc2]';
-  const accentBg = isCapillaire ? 'bg-[#eef4ea]/80' : 'bg-[#eaf1fa]/80';
-  const accentBorder = isCapillaire ? 'border-[#d9e6d0]/60' : 'border-[#d3e2f3]/60';
   const cardBg = isCapillaire ? 'bg-[#f5f8f3]' : 'bg-[#f1f5fa]';
   const accentHoverBg = isCapillaire ? 'hover:bg-[#3a7547]' : 'hover:bg-[#296fc2]';
 
-  // Desktop hover animations
   const desktopHoverProps = !isMobile ? {
-    whileHover: { 
-      y: -8, 
-      boxShadow: "0 20px 30px -10px rgba(0, 0, 0, 0.07), 0 1px 3px 0 rgba(0, 0, 0, 0.02)" 
-    }
+    whileHover: { y: -6, boxShadow: "0 20px 30px -10px rgba(0,0,0,0.07)" }
   } : {};
 
-  // Mobile scroll animations
   const mobileScrollProps = isMobile ? {
     initial: { opacity: 0, y: 30 },
     whileInView: { opacity: 1, y: 0 },
@@ -54,30 +24,26 @@ const ShowcaseCard = ({ product, isMobile }) => {
     transition: { duration: 0.5, ease: "easeOut" }
   } : {};
 
-  const hasValidHoverImage = product.ugcVideo && !hoverImageError;
+  const productImage = product.images?.length > 0 ? getImageUrl(product.images[0]) : '';
 
   return (
     <motion.div
-      onClick={() => navigate(`/product/${product.id}`)}
-      className="group flex flex-col bg-white rounded-2xl border border-gray-100/80 overflow-hidden relative cursor-pointer shadow-xs w-[62vw] sm:w-auto snap-center shrink-0 transition-all duration-300 hover:border-gray-200/60"
+      onClick={() => navigate(`/product/${product.slugName}`)}
+      className="group flex flex-col bg-white rounded-2xl border border-gray-100/80 overflow-hidden relative cursor-pointer shadow-xs w-[62vw] sm:w-auto snap-center shrink-0 transition-all duration-300 hover:border-gray-200/60 hover:-translate-y-1.5 hover:shadow-[0_20px_30px_-10px_rgba(0,0,0,0.07)]"
       {...desktopHoverProps}
       {...mobileScrollProps}
       layout
     >
       {/* Image Area */}
-      <div className={`w-full aspect-[4/5] overflow-hidden relative ${cardBg} transition-colors duration-500`}>
-        
-        {/* Base Product Shot */}
-        {!baseImageError ? (
+      <div className={`w-full aspect-[4/5] overflow-hidden relative ${cardBg} transition-colors duration-500 flex items-center justify-center`}>
+
+        {/* Product Image */}
+        {!baseImageError && productImage ? (
           <img
-            src={product.image}
+            src={productImage}
             alt={product.name}
             onError={() => setBaseImageError(true)}
-            className={`w-full h-full object-cover object-center absolute inset-0 transition-all duration-700 ease-out 
-              ${hasValidHoverImage 
-                ? 'group-hover:scale-105 group-hover:opacity-0' 
-                : 'group-hover:scale-108'
-              }`}
+            className="w-full h-full object-cover absolute inset-0 transition-all duration-700 ease-out group-hover:scale-105"
             loading="lazy"
           />
         ) : (
@@ -86,69 +52,62 @@ const ShowcaseCard = ({ product, isMobile }) => {
           </div>
         )}
 
-        {/* Lifestyle/UGC Image */}
-        {hasValidHoverImage && (
-          <img
-            src={product.ugcVideo}
-            alt={`${product.name} - lifestyle`}
-            onError={() => setHoverImageError(true)}
-            className="w-full h-full object-cover absolute inset-0 opacity-0 scale-110 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-100"
-            loading="lazy"
-          />
-        )}
+        {/* Floating Quick Action CTA (Desktop only) */}
+        <div className="absolute inset-x-0 bottom-4 px-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out z-10 hidden sm:block">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/product/${product.slugName}`);
+            }}
+            className={`w-full bg-white/90 backdrop-blur-md text-gray-900 ${accentHoverBg} hover:text-white text-[11px] font-bold tracking-wider uppercase py-3 px-4 rounded-xl text-center shadow-md transition-all duration-300`}
+          >
+            Découvrir — {product.price.toLocaleString('fr-FR')} DA
+          </button>
+        </div>
 
-        {/* Minimal Best Seller Badge */}
+        {/* Category Badge */}
         <div className="absolute top-4 left-4 z-10">
           <span className="text-[9px] tracking-wider font-bold uppercase px-3 py-1.5 rounded-full shadow-xs bg-white/90 backdrop-blur-md text-gray-800 border border-white/40">
-            ★ Best Seller
+            {product.category?.name || 'Produit'}
           </span>
         </div>
       </div>
 
       {/* Card Content */}
-      <div className="p-5 flex flex-col flex-1 bg-white relative min-h-[145px] sm:min-h-[165px] overflow-hidden">
-        
-        {/* Always visible title */}
-        <h3 className="text-sm sm:text-base font-bold text-gray-800 tracking-tight group-hover:text-gray-950 transition-colors line-clamp-2 leading-snug mb-5">
+      <div className="p-5 flex flex-col flex-1 bg-white gap-3.5">
+
+        {/* Product Name */}
+        <h3 className="text-sm sm:text-base font-bold text-gray-800 tracking-tight group-hover:text-gray-950 transition-colors line-clamp-2 leading-snug min-h-[44px] mt-2">
           {product.name}
         </h3>
 
-        {/* Normal state info (fades out on desktop hover) */}
-        <div className="flex justify-between mt-2 transition-all duration-300 sm:opacity-100 sm:translate-y-0 sm:group-hover:opacity-0 sm:group-hover:translate-y-2 sm:group-hover:pointer-events-none">
-          {/* Category & Rating Row */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <StarRating rating={product.rating} accentColor={accentColor} />
-              <span className="text-[10px] text-gray-400 font-semibold">
-                ({product.reviewsCount})
-              </span>
-            </div>
-          </div>
-
-          {/* Price */}
-          <div className="flex items-baseline gap-1">
-            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Prix:</span>
+        {/* Pricing & Action */}
+        <div className="flex items-center justify-between mt-auto pt-3.5 border-t border-gray-100/80">
+          <div className="flex flex-col">
+            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider leading-none mb-0.5">Prix</span>
             <span className="text-base font-extrabold text-gray-900">
-              {product.price.toLocaleString('fr-FR')} <span className="text-xs font-bold">DA</span>
+              {product.price.toLocaleString('fr-FR')} DA
             </span>
           </div>
-        </div>
 
-        {/* Add to Cart Button (absolute positioned on desktop hover, normal on mobile) */}
-        <div className="w-full sm:absolute sm:left-5 sm:right-5 sm:bottom-5 sm:w-auto sm:opacity-0 sm:translate-y-2 sm:pointer-events-none sm:transition-all sm:duration-300 sm:group-hover:opacity-100 sm:group-hover:sm:translate-y-0 sm:group-hover:sm:pointer-events-auto">
+          {/* Mobile: circle "+" button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
-              const event = new CustomEvent('add-to-cart', { detail: product });
-              window.dispatchEvent(event);
+              navigate(`/product/${product.slugName}`);
             }}
-            className="w-full bg-gray-950 hover:bg-black text-white text-[11px] font-bold tracking-wider uppercase py-3.5 px-4 rounded-xl text-center shadow-sm transition-all duration-300 flex items-center justify-center gap-2 active:scale-98"
+            className="sm:hidden flex items-center justify-center w-9 h-9 rounded-full bg-gray-900 text-white active:scale-95 transition-transform"
+            aria-label="Voir le produit"
           >
-            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Ajouter — {product.price.toLocaleString('fr-FR')} DA
           </button>
+
+          {/* Desktop: text link */}
+          <span className="hidden sm:inline-block text-[10px] font-bold text-gray-900 tracking-widest border-b border-gray-900 group-hover:text-brand-accent group-hover:border-brand-accent transition-colors uppercase pb-0.5">
+            DÉCOUVRIR
+          </span>
         </div>
       </div>
     </motion.div>
@@ -158,6 +117,8 @@ const ShowcaseCard = ({ product, isMobile }) => {
 const ProductShowcase = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
+  const [products, setProducts] = useState([]);
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -166,8 +127,23 @@ const ProductShowcase = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const dermaProducts = products.filter(p => p.gamme === 'dermatologique').slice(0, 2);
-  const capillaireProducts = products.filter(p => p.gamme === 'capillaire').slice(0, 2);
+  useEffect(() => {
+    // Home page does NOT force a theme reset — we let the persisted theme show
+    // (user may have come from the catalog with green/blue already set)
+  }, []);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      const res = await fetchProducts(1, 20);
+      if (res && res.data) {
+        setProducts(res.data);
+      }
+    };
+    loadProducts();
+  }, []);
+
+  const dermaProducts = products.filter(p => p.category?.id === 1 || p.category?.parentCategory === 1).slice(0, 2);
+  const capillaireProducts = products.filter(p => p.category?.id === 3 || p.category?.id === 24 || p.category?.parentCategory === 3).slice(0, 2);
 
   return (
     <section className="w-full bg-white flex flex-col overflow-hidden">
@@ -187,7 +163,10 @@ const ProductShowcase = () => {
             les peaux les plus exigeantes.
           </p>
           <button
-            onClick={() => navigate('/catalog?gamme=dermatologique')}
+            onClick={() => {
+              setTheme('dermatologique');
+              navigate('/catalog?category=1');
+            }}
             className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-gray-900 border-b-2 border-gray-900 pb-1 w-fit hover:text-[#296fc2] hover:border-[#296fc2] transition-colors uppercase"
           >
             EXPLORER LA GAMME
@@ -230,7 +209,10 @@ const ProductShowcase = () => {
             la brillance naturelle de vos cheveux avec nos soins ciblés.
           </p>
           <button
-            onClick={() => navigate('/catalog?gamme=capillaire')}
+            onClick={() => {
+              setTheme('capillaire');
+              navigate('/catalog?category=3');
+            }}
             className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-gray-900 border-b-2 border-gray-900 pb-1 w-fit hover:text-[#3a7547] hover:border-[#3a7547] transition-colors uppercase"
           >
             EXPLORER LA GAMME

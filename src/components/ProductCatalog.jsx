@@ -1,45 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { products } from '../data/products';
+import { fetchCategories, fetchProducts, getImageUrl } from '../api/client';
 import FloatingBackground from './FloatingBackground';
-import { fetchCategories } from '../api/client';
+import { useTheme, isCapillaireCategory } from '../context/ThemeContext';
 
-// Premium Star Rating component matching the Showcase design
-const StarRating = ({ rating, accentColor }) => {
-  const stars = [1, 2, 3, 4, 5];
-  return (
-    <div className="flex items-center gap-[3px]">
-      {stars.map((star) => (
-        <svg
-          key={star}
-          width="12"
-          height="12"
-          viewBox="0 0 20 20"
-          className={star <= Math.round(rating) ? accentColor : 'text-gray-200'}
-          fill="currentColor"
-        >
-          <path d="M10 1l2.8 5.9 6.2.9-4.5 4.5 1.1 6.2L10 15.5 4.4 18.5l1.1-6.2L1 7.8l6.2-.9L10 1z" />
-        </svg>
-      ))}
-    </div>
-  );
-};
 
 const ProductCatalog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const selectedCategoryId = searchParams.get('category') || 'all';
   const [sortBy, setSortBy] = useState('recommended');
+  const { setTheme } = useTheme();
   
   const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadCategories = async () => {
+    const loadData = async () => {
       try {
-        const res = await fetchCategories();
-        if (res && res.data) {
-          setCategories(res.data.filter(cat => cat.state && !cat.trash));
+        const [catRes, prodRes] = await Promise.all([
+          fetchCategories(),
+          fetchProducts(1, 100) // fetch up to 100 products for catalog
+        ]);
+        if (catRes && catRes.data) {
+          setCategories(catRes.data.filter(cat => cat.state && !cat.trash));
+        }
+        if (prodRes && prodRes.data) {
+          setProducts(prodRes.data);
         }
       } catch (error) {
         console.error(error);
@@ -47,8 +35,17 @@ const ProductCatalog = () => {
         setLoading(false);
       }
     };
-    loadCategories();
+    loadData();
   }, []);
+
+  // Switch global theme when selected category changes
+  useEffect(() => {
+    const selectedCat = categories.find(c => c.id.toString() === selectedCategoryId);
+    const catName = selectedCat?.name || '';
+    const capillaire = selectedCategoryId !== 'all' && isCapillaireCategory(selectedCategoryId, catName);
+    setTheme(capillaire ? 'capillaire' : 'dermatologique');
+    // No cleanup — theme persists across page navigation via localStorage
+  }, [selectedCategoryId, categories]);
 
   const handleCategoryChange = (categoryId) => {
     if (categoryId === 'all') {
@@ -61,7 +58,7 @@ const ProductCatalog = () => {
   // Filter products
   const filteredProducts = products.filter((product) => {
     if (selectedCategoryId === 'all') return true;
-    return product.categoryId.toString() === selectedCategoryId;
+    return product.category?.id?.toString() === selectedCategoryId || product.category?.parentCategory?.toString() === selectedCategoryId;
   });
 
   // Sort products
@@ -71,8 +68,8 @@ const ProductCatalog = () => {
     } else if (sortBy === 'price-desc') {
       return b.price - a.price;
     } else {
-      // Default recommended sorting (by rating)
-      return b.rating - a.rating;
+      // Default recommended sorting (newest first for now since rating is missing)
+      return new Date(b.createdAt) - new Date(a.createdAt);
     }
   });
 
@@ -167,7 +164,8 @@ const ProductCatalog = () => {
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-4 sm:gap-y-12 sm:gap-x-8">
               {sortedProducts.map((product) => {
-                const isCapillaire = product.gamme === 'capillaire';
+                const isSoinsVisage = product.category?.name?.toLowerCase().includes('visage');
+                const isCapillaire = !isSoinsVisage && (product.category?.id === 3 || product.category?.id === 24 || product.category?.parentCategory === 3);
                 
                 // Color configuration mapping
                 const accentColor = isCapillaire ? 'text-[#3a7547]' : 'text-[#296fc2]';
@@ -176,37 +174,33 @@ const ProductCatalog = () => {
                 const cardBg = isCapillaire ? 'bg-[#f5f8f3]' : 'bg-[#f1f5fa]';
                 const accentHoverBg = isCapillaire ? 'hover:bg-[#3a7547]' : 'hover:bg-[#296fc2]';
                 
+                const productImage = product.images?.length > 0 ? getImageUrl(product.images[0]) : '';
+                
                 return (
                   <div
                     key={product.id}
-                    onClick={() => navigate(`/product/${product.id}`)}
+                    onClick={() => navigate(`/product/${product.slugName}`)}
                     className="group flex flex-col bg-white rounded-2xl border border-gray-100/80 overflow-hidden relative cursor-pointer shadow-xs transition-all duration-300 hover:border-gray-200/60 hover:-translate-y-1.5 hover:shadow-[0_20px_30px_-10px_rgba(0,0,0,0.07)]"
                   >
                     {/* Image Area */}
-                    <div className={`w-full aspect-[4/5] overflow-hidden relative ${cardBg} transition-colors duration-500`}>
+                    <div className={`w-full aspect-[4/5] overflow-hidden relative ${cardBg} transition-colors duration-500 flex items-center justify-center`}>
                       
                       {/* Base Image */}
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover object-center absolute inset-0 transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-0"
-                        loading="lazy"
-                      />
-
-                      {/* Lifestyle/UGC Image on Hover */}
-                      <img
-                        src={product.ugcVideo}
-                        alt={`${product.name} - lifestyle`}
-                        className="w-full h-full object-cover absolute inset-0 opacity-0 scale-110 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-100"
-                        loading="lazy"
-                      />
+                      {productImage && (
+                        <img
+                          src={productImage}
+                          alt={product.name}
+                          className="w-full h-full object-cover absolute inset-0 transition-all duration-700 ease-out group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      )}
                       
                       {/* Floating Quick Action CTA (Desktop only) */}
                       <div className="absolute inset-x-0 bottom-4 px-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out z-10 hidden sm:block">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/product/${product.id}`);
+                            navigate(`/product/${product.slugName}`);
                           }}
                           className={`w-full bg-white/90 backdrop-blur-md text-gray-900 ${accentHoverBg} hover:text-white text-[11px] font-bold tracking-wider uppercase py-3 px-4 rounded-xl text-center shadow-md transition-all duration-300`}
                         >
@@ -217,7 +211,7 @@ const ProductCatalog = () => {
                       {/* Gamme Badge */}
                       <div className="absolute top-4 left-4 z-10">
                         <span className="text-[9px] tracking-wider font-bold uppercase px-3 py-1.5 rounded-full shadow-xs bg-white/90 backdrop-blur-md text-gray-800 border border-white/40">
-                          {isCapillaire ? 'SOINS CHEVEUX' : 'SOINS VISAGE'}
+                          {product.category?.name || 'Produit'}
                         </span>
                       </div>
                     </div>
@@ -225,37 +219,10 @@ const ProductCatalog = () => {
                     {/* Content Area */}
                     <div className="p-5 flex flex-col flex-1 bg-white gap-3.5">
                       
-                      {/* Rating & Size Row */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <StarRating rating={product.rating} accentColor={accentColor} />
-                          <span className="text-[10px] text-gray-400 font-semibold">
-                            ({product.reviewsCount})
-                          </span>
-                        </div>
-                        {product.sizes?.length > 0 && (
-                          <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider bg-gray-50 px-2 py-0.5 rounded">
-                            {product.sizes[0]}
-                          </span>
-                        )}
-                      </div>
-
                       {/* Product Name */}
-                      <h3 className="text-sm sm:text-base font-bold text-gray-800 tracking-tight group-hover:text-gray-950 transition-colors line-clamp-1 leading-snug">
+                      <h3 className="text-sm sm:text-base font-bold text-gray-800 tracking-tight group-hover:text-gray-950 transition-colors line-clamp-2 leading-snug min-h-[44px] mt-2">
                         {product.name}
                       </h3>
-
-                      {/* Modern Ingredient Badges */}
-                      <div className="flex flex-wrap gap-1.5 min-h-[22px]">
-                        {product.activeIngredients.slice(0, 2).map((ingredient) => (
-                          <span
-                            key={ingredient}
-                            className={`text-[8px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border ${accentBg} ${accentBorder} ${accentColor}`}
-                          >
-                            {ingredient}
-                          </span>
-                        ))}
-                      </div>
 
                       {/* Pricing & Mobile Quick Action */}
                       <div className="flex items-center justify-between mt-auto pt-3.5 border-t border-gray-100/80">
@@ -270,7 +237,7 @@ const ProductCatalog = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/product/${product.id}`);
+                            navigate(`/product/${product.slugName}`);
                           }}
                           className="sm:hidden flex items-center justify-center w-9 h-9 rounded-full bg-gray-900 text-white active:scale-95 transition-transform"
                           aria-label="Acheter"
