@@ -1,0 +1,254 @@
+{
+  "info": {
+    "_postman_id": "15e5070c-83ca-430d-8c47-57604a2241de",
+    "name": "risecart store",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "34577288"
+  },
+  "item": [
+    {
+      "name": "product",
+      "item": [
+        {
+          "name": "GET Product by slug name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{root}}/api/v1/tenant/product/find-one-by-slug/creme-hydratante-visage-20250403160402334?{{domain}}",
+              "host": [
+                "{{root}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tenant",
+                "product",
+                "find-one-by-slug",
+                "creme-hydratante-visage-20250403160402334"
+              ],
+              "query": [
+                {
+                  "key": "{{domain}}",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET All wilayat",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{root}}/api/v1/tenant/city-delivery?limit=100&page=1&{{domain}}",
+              "host": [
+                "{{root}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tenant",
+                "city-delivery"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "{{domain}}",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET All Communes and stopdescks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{root}}/api/v1/tenant/city-delivery/2?limit=1000&page=1&id_wilaya=2&{{domain}}",
+              "host": [
+                "{{root}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tenant",
+                "city-delivery",
+                "2"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "1000"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "id_wilaya",
+                  "value": "2"
+                },
+                {
+                  "key": "{{domain}}",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{root}}/api/v1/tenant/order?{{domain}}",
+              "host": [
+                "{{root}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tenant",
+                "order"
+              ],
+              "query": [
+                {
+                  "key": "{{domain}}",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "categories",
+      "item": [
+        {
+          "name": "GET ALL Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{root}}/api/v1/tenant/category?page=1&limit=50&{{domain}}",
+              "host": [
+                "{{root}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tenant",
+                "category"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "{{domain}}",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{root}}/api/v1/tenant/product/all?page=1&limit=25&name=&{{domain}}",
+              "host": [
+                "{{root}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tenant",
+                "product",
+                "all"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "25"
+                },
+                {
+                  "key": "name",
+                  "value": ""
+                },
+                {
+                  "key": "{{domain}}",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "root",
+      "value": "https://api.risecart.app"
+    },
+    {
+      "key": "domain",
+      "value": "domain=unik.risecart.net"
+    }
+  ]
+}

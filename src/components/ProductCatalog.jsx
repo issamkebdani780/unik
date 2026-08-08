@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { products } from '../data/products';
 import FloatingBackground from './FloatingBackground';
+import { fetchCategories } from '../api/client';
 
 // Premium Star Rating component matching the Showcase design
 const StarRating = ({ rating, accentColor }) => {
@@ -27,21 +28,40 @@ const StarRating = ({ rating, accentColor }) => {
 const ProductCatalog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const selectedGamme = searchParams.get('gamme') || 'all';
+  const selectedCategoryId = searchParams.get('category') || 'all';
   const [sortBy, setSortBy] = useState('recommended');
+  
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleGammeChange = (gammeId) => {
-    if (gammeId === 'all') {
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await fetchCategories();
+        if (res && res.data) {
+          setCategories(res.data.filter(cat => cat.state && !cat.trash));
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadCategories();
+  }, []);
+
+  const handleCategoryChange = (categoryId) => {
+    if (categoryId === 'all') {
       setSearchParams({});
     } else {
-      setSearchParams({ gamme: gammeId });
+      setSearchParams({ category: categoryId });
     }
   };
 
   // Filter products
   const filteredProducts = products.filter((product) => {
-    if (selectedGamme === 'all') return true;
-    return product.gamme === selectedGamme;
+    if (selectedCategoryId === 'all') return true;
+    return product.categoryId.toString() === selectedCategoryId;
   });
 
   // Sort products
@@ -63,7 +83,7 @@ const ProductCatalog = () => {
 
   return (
     <div className="w-full bg-[#fcfcfc] min-h-screen py-8 sm:py-12 animate-[fadeDown_0.3s_ease] relative overflow-hidden">
-      <FloatingBackground gamme={selectedGamme} />
+      <FloatingBackground gamme={selectedCategoryId === '3' ? 'capillaire' : 'dermatologique'} />
       
       <div className="relative z-10">
         {/* Header section */}
@@ -84,34 +104,37 @@ const ProductCatalog = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200/80 pb-6 mb-8 gap-4">
             {/* Category Tabs */}
             <div className="flex flex-wrap gap-2 sm:gap-4">
-              {[
-                { id: 'all', label: 'TOUT VOIR' },
-                { id: 'capillaire', label: 'GAMME CAPILLAIRE' },
-                { id: 'dermatologique', label: 'GAMME DERMATOLOGIQUE' }
-              ].map((tab) => {
-                const isActive = selectedGamme === tab.id;
-                let btnClass = "px-4 py-2 text-[10px] sm:text-xs font-bold tracking-widest border transition-all duration-300 rounded-none cursor-pointer ";
-                
-                if (isActive) {
-                  if (tab.id === 'all') {
-                    btnClass += "border-black bg-black text-white";
+              {loading ? (
+                <div className="text-xs text-gray-400 font-bold tracking-widest">CHARGEMENT DES CATÉGORIES...</div>
+              ) : (
+                [
+                  { id: 'all', label: 'TOUT VOIR' },
+                  ...categories.map(cat => ({ id: cat.id.toString(), label: cat.name.toUpperCase() }))
+                ].map((tab) => {
+                  const isActive = selectedCategoryId === tab.id;
+                  let btnClass = "px-4 py-2 text-[10px] sm:text-xs font-bold tracking-widest border transition-all duration-300 rounded-none cursor-pointer ";
+                  
+                  if (isActive) {
+                    if (tab.id === 'all') {
+                      btnClass += "border-black bg-black text-white";
+                    } else {
+                      btnClass += "text-brand-accent border-brand-accent bg-brand-light";
+                    }
                   } else {
-                    btnClass += "text-brand-accent border-brand-accent bg-brand-light";
+                    btnClass += "border-gray-200 text-gray-500 hover:text-black hover:border-black bg-white";
                   }
-                } else {
-                  btnClass += "border-gray-200 text-gray-500 hover:text-black hover:border-black bg-white";
-                }
 
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => handleGammeChange(tab.id)}
-                    className={btnClass}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => handleCategoryChange(tab.id)}
+                      className={btnClass}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })
+              )}
             </div>
 
             {/* Sort Selector */}
@@ -194,7 +217,7 @@ const ProductCatalog = () => {
                       {/* Gamme Badge */}
                       <div className="absolute top-4 left-4 z-10">
                         <span className="text-[9px] tracking-wider font-bold uppercase px-3 py-1.5 rounded-full shadow-xs bg-white/90 backdrop-blur-md text-gray-800 border border-white/40">
-                          {product.gamme}
+                          {isCapillaire ? 'SOINS CHEVEUX' : 'SOINS VISAGE'}
                         </span>
                       </div>
                     </div>
