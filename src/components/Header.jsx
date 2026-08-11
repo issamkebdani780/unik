@@ -42,15 +42,16 @@ const Header = () => {
       setCartItems(prev => {
         const existing = prev.find(item => item.id === product.id || item.id === `product-${product.id}`);
         if (existing) {
-          return prev.map(item => (item.id === product.id || item.id === `product-${product.id}`) ? { ...item, quantity: item.quantity + 1 } : item);
+          return prev.map(item => (item.id === product.id || item.id === `product-${product.id}`) ? { ...item, quantity: item.quantity + (product.quantity || 1) } : item);
         }
         return [...prev, {
           id: product.id,
           name: product.name,
           price: product.price,
+          images: product.images,
           image: product.image,
-          size: product.sizes?.[0] || '1 pc',
-          quantity: 1
+          size: product.selectedSubOption ? product.selectedSubOption.value : (product.selectedOption ? product.selectedOption.value : (product.sizes?.[0] || '1 pc')),
+          quantity: product.quantity || 1
         }];
       });
       setCartOpen(true);

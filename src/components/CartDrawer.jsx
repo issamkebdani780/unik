@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { getImageUrl } from '../api/client';
 
 const CartDrawer = ({ isOpen, onClose, cartItems = [], onRemove, onUpdateQuantity }) => {
   const navigate = useNavigate();
@@ -89,10 +90,10 @@ const CartDrawer = ({ isOpen, onClose, cartItems = [], onRemove, onUpdateQuantit
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex bg-white p-4 rounded-2xl border border-gray-100 shadow-xs gap-4 items-center">
                     <img 
-                      src={item.image} 
+                      src={item.image || (item.images?.length > 0 ? getImageUrl(item.images[0]) : '')} 
                       alt={item.name} 
                       className="w-16 h-16 object-cover rounded-xl bg-gray-50 flex-shrink-0" 
-                    />
+                    />  
                     <div className="flex-1 min-w-0">
                       <h4 className="text-xs font-bold text-gray-800 tracking-tight line-clamp-1 poppins-bold mb-1">
                         {item.name}
