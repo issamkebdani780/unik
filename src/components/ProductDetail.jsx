@@ -10,6 +10,8 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedSubOption, setSelectedSubOption] = useState(null);
 
   const scrollContainerRef = React.useRef(null);
 
@@ -18,10 +20,36 @@ const ProductDetail = () => {
     const loadProduct = async () => {
       setLoading(true);
       const res = await fetchProductBySlug(slug);
-      if (res && res.data) {
+      if (res && res.id) {
+        setProduct(res);
+        if (res.attribute?.options?.length > 0) {
+          setSelectedOption(res.attribute.options[0]);
+          if (res.attribute.options[0].sizes?.length > 0) {
+            setSelectedSubOption(res.attribute.options[0].sizes[0]);
+          } else {
+            setSelectedSubOption(null);
+          }
+        } else {
+          setSelectedOption(null);
+          setSelectedSubOption(null);
+        }
+      } else if (res && res.data) {
         setProduct(res.data);
+        if (res.data.attribute?.options?.length > 0) {
+          setSelectedOption(res.data.attribute.options[0]);
+          if (res.data.attribute.options[0].sizes?.length > 0) {
+            setSelectedSubOption(res.data.attribute.options[0].sizes[0]);
+          } else {
+            setSelectedSubOption(null);
+          }
+        } else {
+          setSelectedOption(null);
+          setSelectedSubOption(null);
+        }
       } else {
         setProduct(null);
+        setSelectedOption(null);
+        setSelectedSubOption(null);
       }
       setLoading(false);
       setCurrentImageIndex(0);
@@ -68,7 +96,14 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    const event = new CustomEvent('add-to-cart', { detail: { ...product, quantity } });
+    const cartItem = {
+      ...product,
+      quantity,
+      selectedOption,
+      selectedSubOption
+    };
+    
+    const event = new CustomEvent('add-to-cart', { detail: cartItem });
     window.dispatchEvent(event);
 
     setIsAdded(true);
@@ -110,7 +145,7 @@ const ProductDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
           {/* Left: Product Images Carousel */}
           <div className="lg:col-span-6 xl:col-span-7 flex flex-col relative group">
-            <div className={`w-full aspect-[4/5] ${themeBgLight} overflow-hidden border border-gray-100 relative rounded-sm`}>
+            <div className="w-full aspect-[4/5] overflow-hidden border border-gray-100 relative rounded-sm">
               <div
                 ref={scrollContainerRef}
                 className="flex overflow-x-auto snap-x snap-mandatory w-full h-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
@@ -121,7 +156,7 @@ const ProductDetail = () => {
                       key={idx}
                       src={img}
                       alt={`${product.name} - Vue ${idx + 1}`}
-                      className="w-full h-full object-contain flex-shrink-0 snap-center p-4"
+                      className="w-full h-full object-cover flex-shrink-0 snap-center"
                     />
                   ))
                 ) : (
@@ -185,6 +220,66 @@ const ProductDetail = () => {
                 </span>
               )}
             </div>
+
+            {/* Dynamic Attributes (Colors, Sizes, etc) */}
+            {product.attribute?.options?.length > 0 && (
+              <div className="flex flex-col space-y-4 pt-2">
+                {/* Primary Option (e.g., Color) */}
+                {product.attribute.name && (
+                  <div>
+                    <h3 className="text-xs font-bold tracking-widest text-gray-900 uppercase mb-3">
+                      {product.attribute.name} {selectedOption && `: ${selectedOption.value}`}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {product.attribute.options.map((opt) => (
+                        <button
+                          key={opt.id}
+                          onClick={() => {
+                            setSelectedOption(opt);
+                            if (opt.sizes?.length > 0) {
+                              setSelectedSubOption(opt.sizes[0]);
+                            } else {
+                              setSelectedSubOption(null);
+                            }
+                          }}
+                          className={`px-4 py-2 border text-xs font-bold transition-colors uppercase ${
+                            selectedOption?.id === opt.id
+                              ? 'border-black bg-black text-white'
+                              : 'border-gray-200 text-gray-600 hover:border-black hover:text-black bg-white'
+                          }`}
+                        >
+                          {opt.value}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Secondary Option (e.g., Size) */}
+                {product.attribute.optionsName && selectedOption?.sizes?.length > 0 && (
+                  <div>
+                    <h3 className="text-xs font-bold tracking-widest text-gray-900 uppercase mb-3">
+                      {product.attribute.optionsName} {selectedSubOption && `: ${selectedSubOption.value}`}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedOption.sizes.map((size) => (
+                        <button
+                          key={size.id}
+                          onClick={() => setSelectedSubOption(size)}
+                          className={`min-w-[3rem] px-3 py-2 border text-xs font-bold transition-colors uppercase ${
+                            selectedSubOption?.id === size.id
+                              ? 'border-black bg-black text-white'
+                              : 'border-gray-200 text-gray-600 hover:border-black hover:text-black bg-white'
+                          }`}
+                        >
+                          {size.value}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Quantity and Cart button */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">

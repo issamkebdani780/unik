@@ -164,7 +164,7 @@ const CartDrawer = ({ isOpen, onClose, cartItems = [], onRemove, onUpdateQuantit
                     </div>
                     
                     <button 
-                      onClick={() => navigate(`/product/${suggestionProduct.id}`)}
+                      onClick={() => navigate(`/product/${suggestionProduct.slugName}`)}
                       className="px-4 py-2 bg-[#65635f] hover:bg-black text-white font-bold rounded-xl text-[10px] tracking-wider transition-all duration-300 whitespace-nowrap shadow-xs"
                     >
                       AJOUTER — {suggestionProduct.price} DA
