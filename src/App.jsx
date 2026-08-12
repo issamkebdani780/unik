@@ -16,7 +16,9 @@ import FAQ from './components/FAQ';
 import ContactPage from './components/ContactPage';
 import DeliveryExchangePage from './components/DeliveryExchangePage';
 import EmailPopup from './components/EmailPopup';
+import Checkout from './components/Checkout';
 import { ThemeProvider } from './context/ThemeContext';
+import { CartProvider } from './context/CartContext';
 
 // Helper component to scroll to top on route change
 function ScrollToTop() {
@@ -47,25 +49,28 @@ const Home = () => {
 function App() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-brand-light text-black transition-colors duration-500 selection:bg-black selection:text-white">
-        <ScrollToTop />
-        <Header />
-        
-        <main className="transition-all duration-300">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/catalog" element={<ProductCatalog />} />
-            <Route path="/product/:productId" element={<ProductDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/delivery-exchange" element={<DeliveryExchangePage />} />
-          </Routes>
-        </main>
+      <CartProvider>
+        <div className="min-h-screen bg-brand-light text-black transition-colors duration-500 selection:bg-black selection:text-white">
+          <ScrollToTop />
+          <Header />
+          
+          <main className="transition-all duration-300">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/catalog" element={<ProductCatalog />} />
+              <Route path="/product/:productId" element={<ProductDetail />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/delivery-exchange" element={<DeliveryExchangePage />} />
+              <Route path="/checkout" element={<Checkout />} />
+            </Routes>
+          </main>
 
-        <Footer />
-        <EmailPopup />
-      </div>
+          <Footer />
+          <EmailPopup />
+        </div>
+      </CartProvider>
     </ThemeProvider>
   );
 }

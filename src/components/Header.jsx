@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import { useCart } from '../context/CartContext';
 import CartDrawer from './CartDrawer'; // Import our new Cart Drawer
 
 const Header = () => {
@@ -11,6 +12,8 @@ const Header = () => {
   const pathname = location.pathname;
   const isHome = pathname === '/';
   const { theme } = useTheme();
+  
+  const { cartItems, addToCart, updateQuantity, removeFromCart, totalCartCount } = useCart();
 
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -19,46 +22,14 @@ const Header = () => {
     setIsScrolled(latest > 50);
   });
 
-  // Cart state
-  const [cartItems, setCartItems] = useState([]);
-
-  const handleUpdateQuantity = (id, newQty) => {
-    if (newQty <= 0) {
-      handleRemoveItem(id);
-    } else {
-      setCartItems(prev => prev.map(item => item.id === id ? { ...item, quantity: newQty } : item));
-    }
-  };
-
-  const handleRemoveItem = (id) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
-  };
-
-  const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-
   useEffect(() => {
-    const handleAddToCart = (e) => {
-      const product = e.detail;
-      setCartItems(prev => {
-        const existing = prev.find(item => item.id === product.id || item.id === `product-${product.id}`);
-        if (existing) {
-          return prev.map(item => (item.id === product.id || item.id === `product-${product.id}`) ? { ...item, quantity: item.quantity + (product.quantity || 1) } : item);
-        }
-        return [...prev, {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          images: product.images,
-          image: product.image,
-          size: product.selectedSubOption ? product.selectedSubOption.value : (product.selectedOption ? product.selectedOption.value : (product.sizes?.[0] || '1 pc')),
-          quantity: product.quantity || 1
-        }];
-      });
+    const handleAddToCartEvent = (e) => {
+      addToCart(e.detail);
       setCartOpen(true);
     };
-    window.addEventListener('add-to-cart', handleAddToCart);
-    return () => window.removeEventListener('add-to-cart', handleAddToCart);
-  }, []);
+    window.addEventListener('add-to-cart', handleAddToCartEvent);
+    return () => window.removeEventListener('add-to-cart', handleAddToCartEvent);
+  }, [addToCart]);
 
   // Logo animation
   const logoY = useTransform(scrollY, [0, 200], [isHome ? 80 : 0, 0]);
@@ -200,8 +171,8 @@ const Header = () => {
             isOpen={cartOpen} 
             onClose={() => setCartOpen(false)} 
             cartItems={cartItems}
-            onRemove={handleRemoveItem}
-            onUpdateQuantity={handleUpdateQuantity}
+            onRemove={removeFromCart}
+            onUpdateQuantity={updateQuantity}
           />
         )}
       </AnimatePresence>
