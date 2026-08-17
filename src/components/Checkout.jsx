@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { fetchWilayas, fetchCommunes, submitOrder, getImageUrl } from '../api/client';
+import { fetchWilayas, fetchCommunes, submitOrder, submitAbandonedOrder, getImageUrl } from '../api/client';
 
 const Checkout = () => {
   const { cartItems, subtotal, clearCart } = useCart();
@@ -32,6 +32,7 @@ const Checkout = () => {
   const [submitted, setSubmitted] = useState(false);
   const [orderNumber, setOrderNumber] = useState(null);
   const [errors, setErrors] = useState({});
+  const orderCompletedRef = useRef(false);
 
   useEffect(() => {
     const load = async () => {
@@ -44,6 +45,87 @@ const Checkout = () => {
     };
     load();
   }, []);
+
+  // Build the abandoned order payload
+  const buildAbandonedPayload = useCallback(() => {
+    if (!cartItems.length || !form.phone) return null;
+
+    let formattedPhone = form.phone.trim();
+    if (formattedPhone.startsWith('0')) {
+      formattedPhone = '+213' + formattedPhone.slice(1);
+    } else if (!formattedPhone.startsWith('+')) {
+      formattedPhone = '+213' + formattedPhone;
+    }
+
+    const items = cartItems.map(item => {
+      const rawId = String(item.id).replace(/\D/g, '');
+      return {
+        name: item.name,
+        price_item: item.price,
+        price_total: item.price * item.quantity,
+        color: '',
+        size: item.size || '',
+        qte: item.quantity,
+        cancelled: false,
+        product: { id: parseInt(rawId, 10) || 0 }
+      };
+    });
+
+    // Build the "items" summary string
+    const itemsSummary = cartItems.map(item => {
+      const rawId = String(item.id).replace(/\D/g, '');
+      return `name : ${item.name} ,  , price total : ${item.price * item.quantity} , price item : ${item.price} , color : ${item.color || 'noColor'} , size : ${item.size || 'noSize'} , qte : ${item.quantity} , product id : ${rawId}`;
+    }).join('----------------');
+
+    return {
+      contact_phone: formattedPhone,
+      fullName: `${form.firstname} ${form.lastName}`.trim(),
+      nots: form.notes || '',
+      price_promo: 0,
+      to_commune_name: selectedCommune?.name || '',
+      to_wilaya_name: selectedWilaya?.name || '',
+      freeshipping: false,
+      do_insurance: false,
+      has_exchange: false,
+      item: items,
+      sourcePlatform: 'other',
+      is_stopdesk: deliveryType === 'office',
+      price_delivery: 0,
+      price_items: subtotal,
+      price_total: subtotal,
+      firstname: form.firstname || '',
+      familyname: form.lastName || '',
+      lastName: form.lastName || '',
+      email: '',
+      items: itemsSummary + '----------------'
+    };
+  }, [cartItems, form, selectedCommune, selectedWilaya, deliveryType, subtotal]);
+
+  // Send abandoned order when user leaves checkout without completing
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (orderCompletedRef.current) return;
+      const payload = buildAbandonedPayload();
+      if (payload) {
+        // Use sendBeacon for reliability on page unload
+        const url = 'https://api.risecart.app/api/v1/tenant/order-abandoned?domain=unik.risecart.net';
+        navigator.sendBeacon(url, new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Also fire on React route navigation (component unmount)
+      if (!orderCompletedRef.current) {
+        const payload = buildAbandonedPayload();
+        if (payload) {
+          submitAbandonedOrder(payload);
+        }
+      }
+    };
+  }, [buildAbandonedPayload]);
 
   // Delivery cost is calculated based on commune (or wilaya if commune not selected yet)
   const deliverySource = selectedCommune || selectedWilaya;
@@ -186,6 +268,7 @@ const Checkout = () => {
     setSubmitting(false);
 
     if (res && res.order) {
+      orderCompletedRef.current = true;
       setOrderNumber(res.order);
       setSubmitted(true);
       clearCart();

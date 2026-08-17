@@ -99,3 +99,24 @@ export const submitOrder = async (orderData) => {
   }
 };
 
+export const submitAbandonedOrder = async (orderData) => {
+  try {
+    const url = `${API_ROOT}/api/v1/tenant/order-abandoned?domain=${DOMAIN}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderData)
+    });
+    if (!response.ok) {
+      console.error('Abandoned order error:', response.status);
+    }
+    return await response.json().catch(() => null);
+  } catch (error) {
+    console.error('Error submitting abandoned order:', error);
+    return null;
+  }
+};
+
+
