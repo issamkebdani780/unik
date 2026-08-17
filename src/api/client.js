@@ -76,3 +76,26 @@ export const fetchCommunes = async (wilayaId) => {
     return { communes: [], centers: [] };
   }
 };
+
+export const submitOrder = async (orderData) => {
+  try {
+    const url = `${API_ROOT}/api/v1/tenant/order?domain=${DOMAIN}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderData)
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      console.error('Order API error:', response.status, data);
+      return { error: data?.message || `Erreur serveur (${response.status})` };
+    }
+    return data;
+  } catch (error) {
+    console.error('Error submitting order:', error);
+    return { error: error.message || 'Erreur réseau' };
+  }
+};
+

@@ -112,9 +112,21 @@
         },
         {
           "name": "Checkout",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "method": "GET",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"fullName\": \"test command\",\r\n    \"contact_phone\": \"+213777777777\",\r\n    \"to_commune_name\": \"Aïn Merane\",\r\n    \"to_wilaya_name\": \"Chlef\",\r\n    \"nots\": \"\",\r\n    \"is_stopdesk\": true,\r\n    \"firstname\": \"test command\",\r\n    \"lastName\": \"test command\",\r\n    \"familyname\": \"test command\",\r\n    \"has_exchange\": false,\r\n    \"freeshipping\": false,\r\n    \"do_insurance\": false,\r\n    \"price_promo\": 0,\r\n    \"price_total\": 3200,\r\n    \"price_items\": 2900,\r\n    \"price_delivery\": 300,\r\n    \"item\": [\r\n        {\r\n            \"name\": \"Huile Anti-Chute\",\r\n            \"price_total\": 2900,\r\n            \"price_item\": 2900,\r\n            \"color\": \"\",\r\n            \"size\": \"\",\r\n            \"qte\": 1,\r\n            \"cancelled\": false,\r\n            \"product\": {\r\n                \"id\": 24\r\n            }\r\n        }\r\n    ],\r\n    \"sourcePlatform\": \"other\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{root}}/api/v1/tenant/order?{{domain}}",
               "host": [
@@ -131,6 +143,38 @@
                   "key": "{{domain}}",
                   "value": null
                 }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Order-abandoned",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"contact_phone\": \"+213777777777\",\r\n    \"fullName\": \"test command\",\r\n    \"nots\": \"\",\r\n    \"price_promo\": 0,\r\n    \"to_commune_name\": \"\",\r\n    \"to_wilaya_name\": \"\",\r\n    \"freeshipping\": false,\r\n    \"do_insurance\": false,\r\n    \"has_exchange\": false,\r\n    \"item\": [\r\n        {\r\n            \"name\": \"Huile Anti-Chute\",\r\n            \"price_item\": 2900,\r\n            \"price_total\": 2900,\r\n            \"color\": \"\",\r\n            \"size\": \"\",\r\n            \"qte\": 1,\r\n            \"cancelled\": false,\r\n            \"product\": {\r\n                \"id\": 24\r\n            }\r\n        }\r\n    ],\r\n    \"sourcePlatform\": \"other\",\r\n    \"is_stopdesk\": true,\r\n    \"price_delivery\": 0,\r\n    \"price_items\": 2900,\r\n    \"price_total\": 2900,\r\n    \"firstname\": \"test command\",\r\n    \"familyname\": \"test command\",\r\n    \"lastName\": \"test command\",\r\n    \"email\": \"\",\r\n    \"items\": \"name : Huile Anti-Chute ,  , price total : 2900 , price item : 2900 , color : noColor , size : noSize , qte : 1 , product id : 24----------------\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{root}}/api/v1/tenant/order-abandoned&{{domain}}",
+              "host": [
+                "{{root}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tenant",
+                "order-abandoned&{{domain}}"
               ]
             }
           },

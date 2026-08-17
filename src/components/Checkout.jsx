@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { fetchWilayas, fetchCommunes, getImageUrl } from '../api/client';
+import { fetchWilayas, fetchCommunes, submitOrder, getImageUrl } from '../api/client';
 
 const Checkout = () => {
-  const { cartItems, subtotal, updateQuantity, removeFromCart } = useCart();
+  const { cartItems, subtotal, clearCart } = useCart();
   const navigate = useNavigate();
 
   const [wilayas, setWilayas] = useState([]);
@@ -13,18 +13,24 @@ const Checkout = () => {
   const [communes, setCommunes] = useState([]);
   const [selectedCommune, setSelectedCommune] = useState(null);
   const [loadingCommunes, setLoadingCommunes] = useState(false);
+  
+  const [centers, setCenters] = useState([]);
+  const [selectedCenter, setSelectedCenter] = useState(null);
   const [deliveryType, setDeliveryType] = useState('home'); // 'home' or 'office'
 
   const [form, setForm] = useState({
-    fullName: '',
+    firstname: '',
+    lastName: '',
     phone: '',
     address: '',
-    communeId: '',
+    notes: '',
     wilayaId: '',
+    communeId: '',
   });
 
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [orderNumber, setOrderNumber] = useState(null);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -39,9 +45,9 @@ const Checkout = () => {
     load();
   }, []);
 
-  // Delivery cost is only calculated once user selects a commune AND a delivery mode
+  // Delivery cost is calculated based on commune (or wilaya if commune not selected yet)
   const deliverySource = selectedCommune || selectedWilaya;
-  const deliveryReady = !!selectedCommune; // only show cost when commune is chosen
+  const deliveryReady = !!selectedCommune;
   const deliveryCost = deliveryReady && deliverySource
     ? deliveryType === 'home'
       ? (deliverySource.showDeliveryCostToTheHome ? deliverySource.deliveryCostToTheHome : 0)
@@ -53,21 +59,31 @@ const Checkout = () => {
   const handleWilayaChange = async (e) => {
     const id = parseInt(e.target.value, 10);
     const wilaya = wilayas.find(w => w.id === id) || null;
+    
     setSelectedWilaya(wilaya);
     setSelectedCommune(null);
     setCommunes([]);
-    setForm(prev => ({ ...prev, wilayaId: e.target.value, communeId: '' }));
-    // Default delivery type based on what's available
+    setCenters([]);
+    setSelectedCenter(null);
+    
+    setForm(prev => ({ 
+      ...prev, 
+      wilayaId: e.target.value, 
+      communeId: '',
+      address: ''
+    }));
+
     if (wilaya) {
       if (wilaya.showDeliveryCostToTheHome) setDeliveryType('home');
       else if (wilaya.showDeliveryCostToTheOffice) setDeliveryType('office');
-      // Fetch communes for this wilaya
+      
       setLoadingCommunes(true);
       const res = await fetchCommunes(id);
       setCommunes(res.communes || []);
+      setCenters(res.centers || []);
       setLoadingCommunes(false);
     }
-    setErrors(prev => ({ ...prev, wilayaId: '', communeId: '' }));
+    setErrors(prev => ({ ...prev, wilayaId: '', communeId: '', address: '', centerId: '' }));
   };
 
   const handleCommuneChange = (e) => {
@@ -75,7 +91,7 @@ const Checkout = () => {
     const commune = communes.find(c => c.id === id) || null;
     setSelectedCommune(commune);
     setForm(prev => ({ ...prev, communeId: e.target.value }));
-    // Update delivery type defaults for the commune
+    
     if (commune) {
       if (commune.showDeliveryCostToTheHome) setDeliveryType('home');
       else if (commune.showDeliveryCostToTheOffice) setDeliveryType('office');
@@ -91,11 +107,19 @@ const Checkout = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.fullName.trim()) newErrors.fullName = 'Nom requis';
-    if (!form.phone.trim() || !/^(0|\+213)[5-7]\d{8}$/.test(form.phone.trim())) newErrors.phone = 'Numéro invalide (ex: 0551234567)';
-    if (!form.address.trim()) newErrors.address = 'Adresse requise';
+    if (!form.firstname.trim()) newErrors.firstname = 'Prénom requis';
+    if (!form.lastName.trim()) newErrors.lastName = 'Nom de famille requis';
+    if (!form.phone.trim() || !/^(0|\+213)[5-7]\d{8}$/.test(form.phone.trim())) {
+      newErrors.phone = 'Numéro de téléphone invalide (ex: 0551234567)';
+    }
     if (!form.wilayaId) newErrors.wilayaId = 'Wilaya requise';
     if (!form.communeId) newErrors.communeId = 'Commune requise';
+    
+    if (deliveryType === 'home') {
+      if (!form.address.trim()) newErrors.address = 'Adresse de livraison requise';
+    } else {
+      if (!selectedCenter) newErrors.centerId = 'Veuillez sélectionner un bureau de retrait';
+    }
     return newErrors;
   };
 
@@ -106,11 +130,69 @@ const Checkout = () => {
       setErrors(newErrors);
       return;
     }
+    
     setSubmitting(true);
-    // Simulate a submission delay (replace with real API call later)
-    await new Promise(res => setTimeout(res, 1500));
+    
+    // Format phone to +213 international format
+    let formattedPhone = form.phone.trim();
+    if (formattedPhone.startsWith('0')) {
+      formattedPhone = '+213' + formattedPhone.slice(1);
+    } else if (!formattedPhone.startsWith('+')) {
+      formattedPhone = '+213' + formattedPhone;
+    }
+
+    const items = cartItems.map(item => {
+      // Extract numeric ID (handles both "24" and "product-24" formats)
+      const rawId = String(item.id).replace(/\D/g, '');
+      return {
+        name: item.name,
+        price_total: item.price * item.quantity,
+        price_item: item.price,
+        color: "",
+        size: item.size || "",
+        qte: item.quantity,
+        cancelled: false,
+        product: {
+          id: parseInt(rawId, 10) || 0
+        }
+      };
+    });
+
+    const orderPayload = {
+      fullName: `${form.firstname} ${form.lastName}`.trim(),
+      contact_phone: formattedPhone,
+      to_commune_name: selectedCommune?.name || '',
+      to_wilaya_name: selectedWilaya?.name || '',
+      address: form.address,
+      nots: form.notes || '',
+      is_stopdesk: deliveryType === 'office',
+      firstname: form.firstname,
+      lastName: form.lastName,
+      familyname: form.lastName,
+      has_exchange: false,
+      freeshipping: false,
+      do_insurance: false,
+      price_promo: 0,
+      price_total: total,
+      price_items: subtotal,
+      price_delivery: deliveryCost,
+      item: items,
+      sourcePlatform: "other"
+    };
+
+    console.log('Submitting order:', JSON.stringify(orderPayload, null, 2));
+
+    const res = await submitOrder(orderPayload);
     setSubmitting(false);
-    setSubmitted(true);
+
+    if (res && res.order) {
+      setOrderNumber(res.order);
+      setSubmitted(true);
+      clearCart();
+    } else {
+      const errMsg = res?.error || "Une erreur est survenue lors de la validation de votre commande. Veuillez réessayer.";
+      setErrors({ api: errMsg });
+    }
   };
 
   const formatPrice = (p) => Number(p).toLocaleString('fr-FR') + ' DA';
@@ -126,7 +208,7 @@ const Checkout = () => {
           </div>
           <h2 className="text-2xl font-extrabold text-black uppercase tracking-tight">Commande Confirmée !</h2>
           <p className="text-gray-500 text-sm leading-relaxed">
-            Merci <strong>{form.fullName}</strong> ! Votre commande a bien été reçue. Notre équipe vous contactera au <strong>{form.phone}</strong> pour confirmer.
+            Merci <strong>{form.firstname}</strong> ! Votre commande a bien été reçue sous le numéro <strong>#{orderNumber}</strong>. Notre équipe vous contactera au <strong>{form.phone}</strong> pour confirmation.
           </p>
           <button
             onClick={() => navigate('/')}
@@ -156,36 +238,54 @@ const Checkout = () => {
           {/* ─── LEFT: FORM ─────────────────────────────── */}
           <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-8">
 
+            {errors.api && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                {errors.api}
+              </div>
+            )}
+
             {/* Contact Info */}
             <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8 space-y-5">
               <h2 className="text-xs font-extrabold tracking-widest text-black uppercase border-b border-gray-100 pb-4">
-                1 — Informations de contact
+                1 — Informations personnelles
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold tracking-wider text-gray-500 uppercase mb-1.5">Nom complet *</label>
+                  <label className="block text-[10px] font-bold tracking-wider text-gray-500 uppercase mb-1.5">Prénom *</label>
                   <input
                     type="text"
-                    name="fullName"
-                    value={form.fullName}
+                    name="firstname"
+                    value={form.firstname}
                     onChange={handleInput}
-                    placeholder="Ex : Ahmed Benali"
-                    className={`w-full border rounded-xl px-4 py-3 text-sm text-black bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-black transition ${errors.fullName ? 'border-red-400' : 'border-gray-200'}`}
+                    placeholder="Ex : Ahmed"
+                    className={`w-full border rounded-xl px-4 py-3 text-sm text-black bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-black transition ${errors.firstname ? 'border-red-400' : 'border-gray-200'}`}
                   />
-                  {errors.fullName && <p className="text-red-500 text-[10px] mt-1">{errors.fullName}</p>}
+                  {errors.firstname && <p className="text-red-500 text-[10px] mt-1">{errors.firstname}</p>}
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold tracking-wider text-gray-500 uppercase mb-1.5">Numéro de téléphone *</label>
+                  <label className="block text-[10px] font-bold tracking-wider text-gray-500 uppercase mb-1.5">Nom de famille *</label>
                   <input
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
+                    type="text"
+                    name="lastName"
+                    value={form.lastName}
                     onChange={handleInput}
-                    placeholder="Ex : 0551234567"
-                    className={`w-full border rounded-xl px-4 py-3 text-sm text-black bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-black transition ${errors.phone ? 'border-red-400' : 'border-gray-200'}`}
+                    placeholder="Ex : Benali"
+                    className={`w-full border rounded-xl px-4 py-3 text-sm text-black bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-black transition ${errors.lastName ? 'border-red-400' : 'border-gray-200'}`}
                   />
-                  {errors.phone && <p className="text-red-500 text-[10px] mt-1">{errors.phone}</p>}
+                  {errors.lastName && <p className="text-red-500 text-[10px] mt-1">{errors.lastName}</p>}
                 </div>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold tracking-wider text-gray-500 uppercase mb-1.5">Numéro de téléphone *</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleInput}
+                  placeholder="Ex : 0551234567"
+                  className={`w-full border rounded-xl px-4 py-3 text-sm text-black bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-black transition ${errors.phone ? 'border-red-400' : 'border-gray-200'}`}
+                />
+                {errors.phone && <p className="text-red-500 text-[10px] mt-1">{errors.phone}</p>}
               </div>
             </div>
 
@@ -238,70 +338,133 @@ const Checkout = () => {
                 </div>
                 {errors.communeId && <p className="text-red-500 text-[10px] mt-1">{errors.communeId}</p>}
               </div>
-
-              {/* Address */}
-              {/* <div>
-                <label className="block text-[10px] font-bold tracking-wider text-gray-500 uppercase mb-1.5">Adresse complète *</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={form.address}
-                  onChange={handleInput}
-                  placeholder="Ex : Cité 100 logements, Bâtiment B, Apt 12"
-                  className={`w-full border rounded-xl px-4 py-3 text-sm text-black bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-black transition ${errors.address ? 'border-red-400' : 'border-gray-200'}`}
-                />
-                {errors.address && <p className="text-red-500 text-[10px] mt-1">{errors.address}</p>}
-              </div> */}
             </div>
 
             {/* Delivery Method */}
             {(selectedWilaya || selectedCommune) && (
-              <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8 space-y-4">
+              <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8 space-y-6">
                 <h2 className="text-xs font-extrabold tracking-widest text-black uppercase border-b border-gray-100 pb-4">
                   3 — Mode de livraison
                 </h2>
-                <div className="space-y-3">
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {deliverySource?.showDeliveryCostToTheHome && (
-                    <label className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${deliveryType === 'home' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-400'}`}>
-                      <div className="flex items-center gap-3">
+                    <label className={`flex flex-col justify-between p-5 rounded-2xl border-2 cursor-pointer transition-all ${deliveryType === 'home' ? 'border-black bg-gray-50' : 'border-gray-100 hover:border-gray-300 bg-white'}`}>
+                      <div className="flex items-start gap-3">
                         <input
                           type="radio"
                           name="deliveryType"
                           value="home"
                           checked={deliveryType === 'home'}
-                          onChange={() => setDeliveryType('home')}
-                          className="accent-black"
+                          onChange={() => {
+                            setDeliveryType('home');
+                            setForm(prev => ({ ...prev, address: '' }));
+                            setSelectedCenter(null);
+                          }}
+                          className="accent-black mt-1"
                         />
                         <div>
-                          <p className="text-xs font-bold text-black">Livraison à domicile</p>
-                          <p className="text-[10px] text-gray-500 mt-0.5">Livré directement chez vous</p>
+                          <p className="text-xs font-bold text-black uppercase tracking-wider">A domicile</p>
+                          <p className="text-[10px] text-gray-400 mt-1">Livraison à l'adresse de votre choix</p>
                         </div>
                       </div>
-                      <span className="text-sm font-extrabold text-black">{formatPrice(deliverySource.deliveryCostToTheHome)}</span>
+                      <span className="text-sm font-extrabold text-black mt-4 block">{formatPrice(deliverySource.deliveryCostToTheHome)}</span>
                     </label>
                   )}
                   {deliverySource?.showDeliveryCostToTheOffice && (
-                    <label className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${deliveryType === 'office' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-400'}`}>
-                      <div className="flex items-center gap-3">
+                    <label className={`flex flex-col justify-between p-5 rounded-2xl border-2 cursor-pointer transition-all ${deliveryType === 'office' ? 'border-black bg-gray-50' : 'border-gray-100 hover:border-gray-300 bg-white'}`}>
+                      <div className="flex items-start gap-3">
                         <input
                           type="radio"
                           name="deliveryType"
                           value="office"
                           checked={deliveryType === 'office'}
-                          onChange={() => setDeliveryType('office')}
-                          className="accent-black"
+                          onChange={() => {
+                            setDeliveryType('office');
+                            setForm(prev => ({ ...prev, address: '' }));
+                          }}
+                          className="accent-black mt-1"
                         />
                         <div>
-                          <p className="text-xs font-bold text-black">Retrait au bureau (Stop-desk)</p>
-                          <p className="text-[10px] text-gray-500 mt-0.5">Retrait dans un point relais</p>
+                          <p className="text-xs font-bold text-black uppercase tracking-wider">Point Relais (Stop-Desk)</p>
+                          <p className="text-[10px] text-gray-400 mt-1">Récupérez votre colis au bureau Yalidine</p>
                         </div>
                       </div>
-                      <span className="text-sm font-extrabold text-black">{formatPrice(deliverySource.deliveryCostToTheOffice)}</span>
+                      <span className="text-sm font-extrabold text-black mt-4 block">{formatPrice(deliverySource.deliveryCostToTheOffice)}</span>
                     </label>
+                  )}
+                </div>
+
+                {/* Sub-inputs based on delivery type */}
+                <div className="pt-4 border-t border-gray-100">
+                  {deliveryType === 'home' ? (
+                    <div>
+                      <label className="block text-[10px] font-bold tracking-wider text-gray-500 uppercase mb-1.5">Adresse complète *</label>
+                      <input
+                        type="text"
+                        name="address"
+                        value={form.address}
+                        onChange={handleInput}
+                        placeholder="Ex : Cité 100 logements, Bâtiment B, Apt 12"
+                        className={`w-full border rounded-xl px-4 py-3 text-sm text-black bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-black transition ${errors.address ? 'border-red-400' : 'border-gray-200'}`}
+                      />
+                      {errors.address && <p className="text-red-500 text-[10px] mt-1">{errors.address}</p>}
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-[10px] font-bold tracking-wider text-gray-500 uppercase mb-1.5">Bureau Yalidine disponible *</label>
+                      {centers.length === 0 ? (
+                        <p className="text-xs text-amber-600 bg-amber-50 border border-amber-100 p-3 rounded-xl">
+                          Aucun bureau de retrait disponible pour cette wilaya. Veuillez opter pour la livraison à domicile.
+                        </p>
+                      ) : (
+                        <div className="relative">
+                          <select
+                            value={selectedCenter ? selectedCenter.center_id : ''}
+                            onChange={(e) => {
+                              const centerId = parseInt(e.target.value, 10);
+                              const center = centers.find(c => c.center_id === centerId) || null;
+                              setSelectedCenter(center);
+                              if (center) {
+                                setForm(prev => ({ ...prev, address: `${center.name} - ${center.address}` }));
+                              } else {
+                                setForm(prev => ({ ...prev, address: '' }));
+                              }
+                              setErrors(prev => ({ ...prev, centerId: '' }));
+                            }}
+                            className={`w-full border rounded-xl px-4 py-3 text-sm text-black bg-[#fafafa] appearance-none focus:outline-none focus:ring-2 focus:ring-black transition ${errors.centerId ? 'border-red-400' : 'border-gray-200'}`}
+                          >
+                            <option value="">— Sélectionner un bureau de retrait —</option>
+                            {centers.map(c => (
+                              <option key={c.center_id} value={c.center_id}>
+                                {c.name} ({c.address})
+                              </option>
+                            ))}
+                          </select>
+                          <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                      )}
+                      {errors.centerId && <p className="text-red-500 text-[10px] mt-1">{errors.centerId}</p>}
+                    </div>
                   )}
                 </div>
               </div>
             )}
+
+            {/* Order Notes */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8 space-y-4">
+              <h2 className="text-xs font-extrabold tracking-widest text-black uppercase border-b border-gray-100 pb-4">
+                4 — Remarques / Instructions de livraison (Optionnel)
+              </h2>
+              <textarea
+                name="notes"
+                value={form.notes}
+                onChange={handleInput}
+                placeholder="Ex : Veuillez m'appeler avant de passer, ou instructions spéciales..."
+                rows="3"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-black bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-black transition resize-none"
+              />
+            </div>
 
             {/* Submit */}
             <button
@@ -400,3 +563,4 @@ const Checkout = () => {
 };
 
 export default Checkout;
+
